@@ -29,9 +29,6 @@ public class NamingConventionsValidator extends SubValidator {
                     .collect(toList()),
                 "Entity implementation");
         warnWrongComponentName(
-                model.dataAccessDefinitions(),
-                "Data access definition");
-        warnWrongComponentName(
                 model.entityImplementations().stream()
                     .filter(implementation -> implementation.kind() == StorageImplementationKind.DATA_ACCESS)
                     .collect(toList()),

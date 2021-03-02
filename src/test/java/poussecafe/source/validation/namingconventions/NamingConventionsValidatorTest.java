@@ -173,36 +173,6 @@ public class NamingConventionsValidatorTest extends ValidatorTest {
     }
 
     @Test
-    public void correctDataAccessName() {
-        givenValidator();
-        givenAggregateDataAccess();
-        whenValidating();
-        thenNone(this::dataAccessNameWarning);
-    }
-
-    private void givenAggregateDataAccess() {
-        includeClass(MyAggregateDataAccess.class);
-    }
-
-    private boolean dataAccessNameWarning(ValidationMessage message) {
-        return message.type() == ValidationMessageType.WARNING
-                && message.location().source().id().contains("/MyAggregateDataAccess")
-                && message.message().contains("Data access definition name does not follow naming convention");
-    }
-
-    @Test
-    public void warnWrongDataAccessName() {
-        givenValidator();
-        givenAggregateDataAccess2();
-        whenValidating();
-        thenAtLeast(this::dataAccessNameWarning);
-    }
-
-    private void givenAggregateDataAccess2() {
-        includeClass(MyAggregateDataAccess2.class);
-    }
-
-    @Test
     public void correctDataAccessImplementationName() {
         givenValidator();
         givenAggregateDataAccessImplementation();

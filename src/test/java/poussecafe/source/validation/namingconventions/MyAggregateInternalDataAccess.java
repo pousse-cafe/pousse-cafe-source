@@ -11,6 +11,6 @@ import poussecafe.storage.internal.InternalStorage;
 )
 public class MyAggregateInternalDataAccess
 extends InternalDataAccess<String, MyAggregateAttributes>
-implements MyAggregateDataAccess<MyAggregateAttributes> {
+implements MyAggregate.Repository.DataAccess<MyAggregateAttributes> {
 
 }

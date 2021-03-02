@@ -154,15 +154,6 @@ public class ValidationModelPersistenceTest {
                 .build();
         model.addAggregateRepository(aggregateRepository);
 
-        dataAccessDefinition = new DataAccessDefinition.Builder()
-                .sourceLine(new SourceLine.Builder()
-                        .source(new PathSource(Path.of("package/AggregateDataAccess.java")))
-                        .line(43)
-                        .build())
-                .className(new ClassName("package.AggregateData"))
-                .build();
-        model.addDataAccessDefinition(dataAccessDefinition);
-
         aggregateContainer = new AggregateContainer.Builder()
                 .sourceLine(new SourceLine.Builder()
                         .source(new PathSource(Path.of("package/Aggregate.java")))
@@ -199,8 +190,6 @@ public class ValidationModelPersistenceTest {
     private AggregateComponentDefinition aggregateFactory;
 
     private AggregateComponentDefinition aggregateRepository;
-
-    private DataAccessDefinition dataAccessDefinition;
 
     private AggregateContainer aggregateContainer;
 

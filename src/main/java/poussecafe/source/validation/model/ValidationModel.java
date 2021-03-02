@@ -158,17 +158,6 @@ public class ValidationModel implements Serializable {
         return Collections.unmodifiableList(aggregateRepositories);
     }
 
-    public void addDataAccessDefinition(DataAccessDefinition definition) {
-        dataAccessDefinitions.add(definition);
-        addClass(definition);
-    }
-
-    private List<DataAccessDefinition> dataAccessDefinitions = new ArrayList<>();
-
-    public List<DataAccessDefinition> dataAccessDefinitions() {
-        return Collections.unmodifiableList(dataAccessDefinitions);
-    }
-
     public void forget(String sourceId) {
         forget(sourceId, messageDefinitions);
         forget(sourceId, messageImplementations);
@@ -187,7 +176,7 @@ public class ValidationModel implements Serializable {
         listeners.removeIf(listener -> listener.sourceLine().source().id().equals(sourceId));
 
         forget(sourceId, runners.values());
-        forget(sourceId, dataAccessDefinitions);
+        ignoredProducesEventAnnotations.removeIf(line -> line.source().id().equals(sourceId));
     }
 
     private void forget(
@@ -245,7 +234,6 @@ public class ValidationModel implements Serializable {
                 .append(modules, other.modules)
                 .append(processDefinitions, other.processDefinitions)
                 .append(runners, other.runners)
-                .append(dataAccessDefinitions, other.dataAccessDefinitions)
                 .append(aggregateContainers, other.aggregateContainers)
                 .append(ignoredProducesEventAnnotations, other.ignoredProducesEventAnnotations)
                 .build());
@@ -266,7 +254,6 @@ public class ValidationModel implements Serializable {
                 .append(modules)
                 .append(processDefinitions)
                 .append(runners)
-                .append(dataAccessDefinitions)
                 .append(aggregateContainers)
                 .append(ignoredProducesEventAnnotations)
                 .build();

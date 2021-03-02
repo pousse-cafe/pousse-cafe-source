@@ -8,7 +8,6 @@ import poussecafe.source.analysis.AggregateRootClass;
 import poussecafe.source.analysis.ClassName;
 import poussecafe.source.analysis.CompilationUnitResolver;
 import poussecafe.source.analysis.DataAccessImplementationType;
-import poussecafe.source.analysis.DataAccessInterface;
 import poussecafe.source.analysis.EntityDefinitionType;
 import poussecafe.source.analysis.EntityImplementationType;
 import poussecafe.source.analysis.FactoryClass;
@@ -31,7 +30,6 @@ import poussecafe.source.model.TypeComponent;
 import poussecafe.source.validation.model.AggregateComponentDefinition;
 import poussecafe.source.validation.model.AggregateComponentKind;
 import poussecafe.source.validation.model.AggregateContainer;
-import poussecafe.source.validation.model.DataAccessDefinition;
 import poussecafe.source.validation.model.EntityDefinition;
 import poussecafe.source.validation.model.EntityImplementation;
 import poussecafe.source.validation.model.MessageDefinition;
@@ -72,8 +70,6 @@ public class ValidationModelBuilderVisitor implements ResolvedCompilationUnitVis
             }
         } else if(EntityImplementationType.isEntityImplementation(resolvedTypeDeclaration)) {
             visitEntityImplementation(resolvedTypeDeclaration);
-        } else if(DataAccessInterface.isDataAccess(resolvedTypeDeclaration)) {
-            visitDataAccess(resolvedTypeDeclaration);
         } else if(DataAccessImplementationType.isDataAccessImplementation(resolvedTypeDeclaration)) {
             visitDataAccessImplementation(resolvedTypeDeclaration);
         } else if(RunnerClass.isRunner(resolvedTypeDeclaration)) {
@@ -144,14 +140,6 @@ public class ValidationModelBuilderVisitor implements ResolvedCompilationUnitVis
                 .storageNames(implementationType.storageNames())
                 .kind(StorageImplementationKind.ATTRIBUTES)
                 .isConcrete(resolvedTypeDeclaration.isConcrete())
-                .build());
-    }
-
-    private void visitDataAccess(ResolvedTypeDeclaration resolvedTypeDeclaration) {
-        var implementationType = new DataAccessInterface(resolvedTypeDeclaration);
-        model.addDataAccessDefinition(new DataAccessDefinition.Builder()
-                .sourceLine(unit.sourceFileLine(resolvedTypeDeclaration.typeDeclaration()))
-                .className(implementationType.className().asName())
                 .build());
     }
 
