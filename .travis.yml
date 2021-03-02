@@ -1,0 +1,18 @@
+language: java
+addons:
+  apt:
+    packages:
+    - xmlstarlet
+    - graphviz
+jdk:
+- oraclejdk11
+install: []
+script:
+- mvn verify -B -U -Dmaven.javadoc.skip=true
+after_success:
+- wget -O settings.xml https://raw.githubusercontent.com/pousse-cafe/pousse-cafe-deploy/master/snapshot_release_settings.xml
+- ./can_auto_deploy.sh && mvn deploy --settings settings.xml -Dmaven.javadoc.skip=true -DskipTests
+env:
+  global:
+  - secure: DokcgQOhI8bVJR8LzWcVPG6RnEQ1umwMLiylNgTLgA73S20aDHdHEsLcZWdQQOz2n0htvSZszmJQswCw0JS2L5NllFQW5vGPBHA5ZjIqFv5o5IKgHr8+NQXd97hsvdDmEV/ZZOwvwGICF/bGn2sWWeVNeyhej86Xoym/zBQoroHJ52YfbU3s+A0kGH5GFN4TRKE9niKrUYrf5q6bHAERdCyKhieN2P4hA1JPJ9zmrJ4B35mDwMDRiatqH1Y4sQg4q4ytQe7la7BnU6DGHhXN7z0AHYbZVRnsqH/MfPLqBLcubggW3KzWb7525vakX+sV9/1DoYmp/ELU15LSE5lb4BOcM76HD6ZnDvzD52xEuXDs1/OZnY+mbo0E1n2MI9LBU29ghC/OYCAb3mVX/oF1nFtg/4mLjjjadKu49kNGXQ8CeKOuA0vd+TtZk6Za/oZHRUyWGTs4GrnD0LQhzGR4u2KPN5Yt3kV3mM6Y1qgmbsD1IJasnhvfmv5Wg4AWImairgpbFZU86eBAtyBr7xwCkgK7cjpiaNce6lakGFKQg2aFKcxC3H1aU1YZlFT/emxiK74ZeieqLB24rMOKsvF3JejWYKVVoSllyP9Jrmtl9ZMmEl/iM2HffCqXs3xCFvIsyDJIVPXvg92SYEH7t/+W/+GM9hPefYTg8c83T2AElxE=
+  - secure: qEIQCQbLLgHV+Fsf+gagzT5tej4+ciJqJZXjI7sHYS5dc3Y8X+vYg+sPhPG6//g0SptLR8GKOsZUj8CCIIgLiGcpQmjefoyUrw/IWgYpbM7eEiogMbvD4wBWFBSQXKomi7uen9vuiElkkxmZ+6DLKwbj2oEHP+tm1mV4/WEXSWhVvtFiOP6t2MuFO+6v+RBEbsmW1/W7SjQ5z47cTmcMi0MqAs2ysbv0fKUMl+6Qv23HPPxnYMNw+BG3KA6rk48UKpjCOr8GQM18jkNCJlv9ypvhkb9hJbxkEmtigLSmgwt1SYYioYUh+7oHdesYv2wm7BPNlfOocEtRjDDi7m4kH7vNG8z/67lnxAt0vyDtx/eS7HM1iRMLWANTYBL17kwhdaitHuV9+IJvotzps9gAXBgy2vkPLlGIrpWBwqOFJU60Narp7D2F4j67oRS068nd7KlSd5co3cubj81yG+fPKM1fMG2o9p7yFQuuGRSELpbsueMYgeDBkPTkj64jd4hfC5iGmL9/BT+V5faWQBlWo3nVN/ocr5I3uNpoQBtr09vwLtR0nc+2AE9a4yiYw8TVEx5qSKj0t7BV6afsUSu99sC1sTY/RS14LaNTo7up6yDdthDGQPE/nMlnjMq0V7ptaDIJIZzqrt6ixoi4MpXbvHjuelU6pAQRvZ7jgHlrkJc=
