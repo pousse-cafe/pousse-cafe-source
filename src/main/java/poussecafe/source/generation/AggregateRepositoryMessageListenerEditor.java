@@ -48,6 +48,7 @@ public class AggregateRepositoryMessageListenerEditor extends AggregateMessageLi
     @Override
     protected void setBody(MethodDeclarationEditor methodEditor) {
         methodEditor.setEmptyBodyWithComment("TODO: return identifier(s) of aggregates to delete");
+        methodEditor.appendStatementToBody(ast.newReturnNullStatement());
     }
 
     public static class Builder {
