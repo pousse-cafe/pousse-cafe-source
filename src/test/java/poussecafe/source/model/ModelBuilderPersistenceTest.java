@@ -32,14 +32,14 @@ public class ModelBuilderPersistenceTest {
                 .packageName("package.commands")
                 .source(new PathSource(Path.of("package/commands/Command1.java")))
                 .build();
-        builder.addCommand(command1);
+        builder.replaceCommand(command1);
 
         event1 = new DomainEvent.Builder()
                 .name("Event1")
                 .packageName("package.events")
                 .source(new PathSource(Path.of("package/events/Event1.java")))
                 .build();
-        builder.addEvent(event1);
+        builder.replaceDomainEvent(event1);
 
         process = new ProcessModel.Builder()
                 .name("Process")

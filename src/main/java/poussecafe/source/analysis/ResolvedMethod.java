@@ -6,6 +6,7 @@ import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import poussecafe.source.JavaDocStringBuilder;
 
 import static java.util.Objects.requireNonNull;
 
@@ -79,6 +80,11 @@ public class ResolvedMethod {
     }
 
     private ResolvedTypeDeclaration declaringType;
+
+    public Optional<String> documentation() {
+        return Optional.ofNullable(declaration.getJavadoc())
+                .map(javadoc -> new JavaDocStringBuilder().withJavadoc(javadoc).build());
+    }
 
     public static class Builder {
 

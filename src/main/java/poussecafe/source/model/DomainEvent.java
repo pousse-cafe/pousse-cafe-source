@@ -1,6 +1,7 @@
 package poussecafe.source.model;
 
 import java.io.Serializable;
+import java.util.Optional;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import poussecafe.source.Source;
@@ -36,6 +37,11 @@ public class DomainEvent extends ComponentWithType implements Serializable {
             event.packageName = packageName;
             return this;
         }
+
+        public Builder documentation(Optional<String> documentation) {
+            event.documentation = documentation.orElse(null);
+            return this;
+        }
     }
 
     private DomainEvent() {
@@ -48,6 +54,7 @@ public class DomainEvent extends ComponentWithType implements Serializable {
                 .append(source, other.source)
                 .append(name, other.name)
                 .append(packageName, other.packageName)
+                .append(documentation, other.documentation)
                 .build());
     }
 
@@ -57,6 +64,7 @@ public class DomainEvent extends ComponentWithType implements Serializable {
                 .append(source)
                 .append(name)
                 .append(packageName)
+                .append(documentation)
                 .build();
     }
 }

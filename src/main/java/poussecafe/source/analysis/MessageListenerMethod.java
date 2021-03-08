@@ -62,4 +62,8 @@ public class MessageListenerMethod {
     public Optional<ResolvedType> returnType() {
         return method.returnType();
     }
+
+    public Optional<String> documentation() {
+        return method.documentation();
+    }
 }

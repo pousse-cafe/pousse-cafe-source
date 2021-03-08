@@ -117,9 +117,39 @@ public class SourceModel {
         return Optional.ofNullable(runners.get(className));
     }
 
+    void addModule(TypeComponent module) {
+        modules.add(module);
+    }
+
+    private List<TypeComponent> modules = new ArrayList<>();
+
+    public List<TypeComponent> modules() {
+        return Collections.unmodifiableList(modules);
+    }
+
+    void addEntity(TypeComponent entity) {
+        entities.add(entity);
+    }
+
+    private List<TypeComponent> entities = new ArrayList<>();
+
+    public List<TypeComponent> entities() {
+        return Collections.unmodifiableList(entities);
+    }
+
+    void addValueObject(TypeComponent valueObject) {
+        valueObjects.add(valueObject);
+    }
+
+    private List<TypeComponent> valueObjects = new ArrayList<>();
+
+    public List<TypeComponent> valueObjects() {
+        return Collections.unmodifiableList(valueObjects);
+    }
+
     /**
      * Fixing package names implies the copy of all components of a given model but keeping
-     * the package names as defined in this model. Only the components in given modal are kept in the
+     * the package names as defined in this model. Only the components from given model are kept in the
      * result.
      *
      * @param newModel The new model to fix with current model.

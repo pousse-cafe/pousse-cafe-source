@@ -11,8 +11,16 @@ public class MessageDefinitionType {
     }
 
     private static boolean isCommandOrEvent(ResolvedTypeDeclaration type) {
-        return type.name().instanceOf(CompilationUnitResolver.COMMAND_INTERFACE)
-                || type.name().instanceOf(CompilationUnitResolver.DOMAIN_EVENT_INTERFACE);
+        return isCommand(type)
+                || isDomainEvent(type);
+    }
+
+    public static boolean isCommand(ResolvedTypeDeclaration type) {
+        return type.name().instanceOf(CompilationUnitResolver.COMMAND_INTERFACE);
+    }
+
+    public static boolean isDomainEvent(ResolvedTypeDeclaration type) {
+        return type.name().instanceOf(CompilationUnitResolver.DOMAIN_EVENT_INTERFACE);
     }
 
     private static boolean isAbstractDefinition(ResolvedTypeDeclaration type) {

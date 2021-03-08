@@ -98,7 +98,7 @@ public class TreeAnalyzer {
         var commandName = context.command().NAME().getText();
         var typeName = SafeClassName.ofRootClass(new ClassName(NamingConventions.commandsPackageName(basePackage),
                 commandName));
-        model.addCommand(new Command.Builder()
+        model.addCommandIfAbsent(new Command.Builder()
                 .name(commandName)
                 .packageName(typeName.rootClassName().qualifier())
                 .source(source(typeName))
@@ -289,7 +289,7 @@ public class TreeAnalyzer {
 
     private void analyzeEventProduction(EventProductionContext eventProduction) {
         var message = Message.domainEvent(eventProduction.event().NAME().getText());
-        model.addEvent(event(message.name()));
+        model.addEventIfAbsent(event(message.name()));
         analyzeMessageConsumptions(Optional.empty(), message, eventProduction.messageConsumptions());
     }
 
@@ -452,7 +452,7 @@ public class TreeAnalyzer {
 
     private void analyzeEventConsumption(EventConsumptionContext context) {
         var eventName = context.event().NAME().getText();
-        model.addEvent(event(eventName));
+        model.addEventIfAbsent(event(eventName));
         Optional<String> consumesFromExternal = Optional.ofNullable(context.external())
                 .map(ExternalContext::NAME)
                 .map(TerminalNode::getText);

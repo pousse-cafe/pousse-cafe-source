@@ -88,14 +88,16 @@ public class SourceModelBuilder implements Serializable {
         return unmodifiableList(listeners);
     }
 
-    public void addCommand(Command command) {
+    public void addCommandIfAbsent(Command command) {
         var existingCommand = commands.get(command.simpleName());
-        if(existingCommand != null
-                && !existingCommand.name().equals(command.name())) {
-            throw new IllegalArgumentException("A command with this name already exists but qualifiers do not match: "
-                    + existingCommand.name().getQualifier() + " <> " + command.name().getQualifier());
+        if(existingCommand == null) {
+            commands.put(command.simpleName(), command);
+        } else if(!existingCommand.name().equals(command.name())) {
+            throw new IllegalArgumentException(
+                    "A command with this name already exists but qualifiers do not match: " + existingCommand
+                            .name()
+                            .getQualifier() + " <> " + command.name().getQualifier());
         }
-        commands.put(command.simpleName(), command);
     }
 
     private Map<String, Command> commands = new HashMap<>();
@@ -108,14 +110,18 @@ public class SourceModelBuilder implements Serializable {
         return Optional.ofNullable(commands.get(name));
     }
 
-    public void addEvent(DomainEvent event) {
+    public void replaceCommand(Command command) {
+        commands.put(command.simpleName(), command);
+    }
+
+    public void addEventIfAbsent(DomainEvent event) {
         var existingEvent = events.get(event.simpleName());
-        if(existingEvent != null
-                && !existingEvent.name().equals(event.name())) {
+        if(existingEvent == null) {
+            events.put(event.simpleName(), event);
+        } else if(!existingEvent.name().equals(event.name())) {
             throw new IllegalArgumentException("An event with this name already exists but qualifiers do not match: "
                     + existingEvent.name().getQualifier() + " <> " + event.name().getQualifier());
         }
-        events.put(event.simpleName(), event);
     }
 
     private Map<String, DomainEvent> events = new HashMap<>();
@@ -128,11 +134,33 @@ public class SourceModelBuilder implements Serializable {
         return Optional.ofNullable(events.get(name));
     }
 
+    public void replaceDomainEvent(DomainEvent event) {
+        events.put(event.simpleName(), event);
+    }
+
     public void addRunner(Runner runnerClass) {
         runners.put(runnerClass.className(), runnerClass);
     }
 
     private Map<String, Runner> runners = new HashMap<>();
+
+    public void addModule(TypeComponent typeComponent) {
+        modules.add(typeComponent);
+    }
+
+    private List<TypeComponent> modules = new ArrayList<>();
+
+    public void addEntity(TypeComponent typeComponent) {
+        entities.add(typeComponent);
+    }
+
+    private List<TypeComponent> entities = new ArrayList<>();
+
+    public void addValueObject(TypeComponent typeComponent) {
+        valueObjects.add(typeComponent);
+    }
+
+    private List<TypeComponent> valueObjects = new ArrayList<>();
 
     public void forget(String sourceId) {
         forget(sourceId, standaloneAggregateFactories.values());
@@ -144,6 +172,9 @@ public class SourceModelBuilder implements Serializable {
         forget(sourceId, events.values());
         forget(sourceId, runners.values());
         listeners.removeIf(listener -> listener.source().id().equals(sourceId));
+        forgetTypeComponents(sourceId, modules);
+        forgetTypeComponents(sourceId, entities);
+        forgetTypeComponents(sourceId, valueObjects);
     }
 
     private <T extends WithTypeComponent> void forget(
@@ -152,8 +183,17 @@ public class SourceModelBuilder implements Serializable {
         components.removeIf(component -> component.typeComponent().source().id().equals(sourceId));
     }
 
+    private <T extends TypeComponent> void forgetTypeComponents(
+            String sourceId,
+            Collection<T> components) {
+        components.removeIf(component -> component.source().id().equals(sourceId));
+    }
+
     public SourceModel build() {
         var model = new SourceModel();
+        modules.forEach(model::addModule);
+        entities.forEach(model::addEntity);
+        valueObjects.forEach(model::addValueObject);
         processes.values().forEach(model::addProcess);
         commands.values().forEach(model::addCommand);
         events.values().forEach(model::addEvent);
@@ -205,6 +245,7 @@ public class SourceModelBuilder implements Serializable {
                     name -> newBuilder(name, root.typeComponent().typeName().rootClassName().qualifier()));
             aggregate.innerRoot(false);
             aggregate.standaloneRootSource(Optional.of(root.typeComponent().source()));
+            aggregate.documentation(root.typeComponent().documentation());
         }
 
         for(StandaloneAggregateRepository repository : standaloneAggregateRepositories.values()) {
@@ -218,6 +259,7 @@ public class SourceModelBuilder implements Serializable {
             var aggregate = aggregates.computeIfAbsent(container.aggregateName(),
                     name -> newBuilder(name, container.typeComponent().typeName().rootClassName().qualifier()));
             aggregate.containerSource(Optional.of(container.typeComponent().source()));
+            aggregate.documentation(container.typeComponent().documentation());
         }
     }
 

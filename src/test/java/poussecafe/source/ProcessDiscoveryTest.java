@@ -7,7 +7,7 @@ public class ProcessDiscoveryTest extends DiscoveryTest {
 
     @Test
     public void findProcesses() throws IOException { // NOSONAR - assertions in ModelAssertions
-        givenScanner();
+        givenModelBuilder();
         whenIncludingTestModelTree();
         thenProcessesFound();
         thenProcessesHaveListeners();

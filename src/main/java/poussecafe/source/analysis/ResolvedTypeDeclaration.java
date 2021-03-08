@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import poussecafe.source.JavaDocStringBuilder;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -135,6 +136,11 @@ public class ResolvedTypeDeclaration {
                 .safeClassName(unresolvedName().withLastSegment(innerType.getName().toString()))
                 .build();
         return innerClassResolver.resolvedTypeDeclaration();
+    }
+
+    public Optional<String> documentation() {
+        return Optional.ofNullable(declaration.getJavadoc())
+                .map(javadoc -> new JavaDocStringBuilder().withJavadoc(javadoc).build());
     }
 
     public static class Builder {

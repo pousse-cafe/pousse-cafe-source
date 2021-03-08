@@ -2,6 +2,8 @@ package poussecafe.source.testmodel.model.aggregate1;
 
 import java.util.List;
 import java.util.Optional;
+import poussecafe.attribute.Attribute;
+import poussecafe.attribute.entity.EntityAttribute;
 import poussecafe.discovery.Aggregate;
 import poussecafe.discovery.MessageListener;
 import poussecafe.discovery.ProducesEvent;
@@ -18,6 +20,9 @@ import poussecafe.source.testmodel.model.events.Event4;
 import poussecafe.source.testmodel.model.events.Event5;
 import poussecafe.source.testmodel.process.Process1;
 
+/**
+ * Aggregate1 documentation.
+ */
 @Aggregate
 public class Aggregate1 {
 
@@ -40,6 +45,9 @@ public class Aggregate1 {
 
         public static interface Attributes extends EntityAttributes<String> {
 
+            Attribute<ValueObject1> valueObject1();
+
+            EntityAttribute<Entity1> entity1();
         }
     }
 

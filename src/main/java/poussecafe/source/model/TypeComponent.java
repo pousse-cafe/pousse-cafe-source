@@ -1,6 +1,7 @@
 package poussecafe.source.model;
 
 import java.io.Serializable;
+import java.util.Optional;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import poussecafe.source.Source;
@@ -10,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 import static poussecafe.util.Equality.referenceEquals;
 
 @SuppressWarnings("serial")
-public class TypeComponent implements Serializable {
+public class TypeComponent implements Serializable, Documented {
 
     private Source source;
 
@@ -24,23 +25,35 @@ public class TypeComponent implements Serializable {
         return typeName;
     }
 
+    private String documentation;
+
+    @Override
+    public Optional<String> documentation() {
+        return Optional.ofNullable(documentation);
+    }
+
     public static class Builder {
 
-        private TypeComponent aggregate = new TypeComponent();
+        private TypeComponent component = new TypeComponent();
 
         public TypeComponent build() {
-            requireNonNull(aggregate.typeName);
-            requireNonNull(aggregate.source);
-            return aggregate;
+            requireNonNull(component.typeName);
+            requireNonNull(component.source);
+            return component;
         }
 
         public Builder name(SafeClassName typeName) {
-            aggregate.typeName = typeName;
+            component.typeName = typeName;
             return this;
         }
 
         public Builder source(Source source) {
-            aggregate.source = source;
+            component.source = source;
+            return this;
+        }
+
+        public Builder documentation(Optional<String> documentation) {
+            component.documentation = documentation.orElse(null);
             return this;
         }
     }
@@ -54,6 +67,7 @@ public class TypeComponent implements Serializable {
         return referenceEquals(this, obj).orElse(other -> new EqualsBuilder()
                 .append(source, other.source)
                 .append(typeName, other.typeName)
+                .append(documentation, other.documentation)
                 .build());
     }
 
@@ -62,6 +76,7 @@ public class TypeComponent implements Serializable {
         return new HashCodeBuilder()
                 .append(source)
                 .append(typeName)
+                .append(documentation)
                 .build();
     }
 }

@@ -7,7 +7,7 @@ public class MessageListenerDiscoveryTest extends DiscoveryTest {
 
     @Test
     public void findMessageListeners() throws IOException {
-        givenScanner();
+        givenModelBuilder();
         whenIncludingTestModelTree();
         thenAggregateListenersFound();
     }

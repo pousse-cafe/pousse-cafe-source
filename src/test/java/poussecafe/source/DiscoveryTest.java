@@ -8,7 +8,7 @@ import poussecafe.source.model.SourceModel;
 
 public abstract class DiscoveryTest {
 
-    protected void givenScanner() {
+    protected void givenModelBuilder() {
         modelBuilder = new SourceModelBuilder(new ClassLoaderClassResolver());
     }
 

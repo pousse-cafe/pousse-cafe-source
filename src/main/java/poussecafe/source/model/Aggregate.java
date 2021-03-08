@@ -79,6 +79,12 @@ public class Aggregate implements Serializable {
         return new AggregatePackage(packageName, name);
     }
 
+    public Optional<String> documentation() {
+        return Optional.ofNullable(documentation);
+    }
+
+    private String documentation;
+
     public static class Builder implements Serializable {
 
         private Aggregate aggregate = new Aggregate();
@@ -204,6 +210,11 @@ public class Aggregate implements Serializable {
 
         public boolean provided() {
             return provided;
+        }
+
+        public Builder documentation(Optional<String> documentation) {
+            aggregate.documentation = documentation.orElse(null);
+            return this;
         }
     }
 

@@ -1,6 +1,7 @@
 package poussecafe.source.model;
 
 import java.io.Serializable;
+import java.util.Optional;
 import poussecafe.source.Source;
 import poussecafe.source.analysis.ClassName;
 import poussecafe.source.analysis.SafeClassName;
@@ -30,6 +31,12 @@ public class ComponentWithType implements Serializable, WithTypeComponent {
         return source;
     }
 
+    protected String documentation;
+
+    public Optional<String> documentation() {
+        return Optional.ofNullable(documentation);
+    }
+
     protected ComponentWithType() {
 
     }
@@ -39,6 +46,7 @@ public class ComponentWithType implements Serializable, WithTypeComponent {
         return new TypeComponent.Builder()
                 .name(SafeClassName.ofRootClass(name()))
                 .source(source())
+                .documentation(documentation())
                 .build();
     }
 }

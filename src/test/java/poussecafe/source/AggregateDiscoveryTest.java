@@ -7,7 +7,7 @@ public class AggregateDiscoveryTest extends DiscoveryTest {
 
     @Test
     public void findAggregates() throws IOException { // NOSONAR - assertions in ModelAssertions
-        givenScanner();
+        givenModelBuilder();
         whenIncludingTestModelTree();
         thenAggregatesFound();
     }

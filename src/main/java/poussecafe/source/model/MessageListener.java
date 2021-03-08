@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toList;
 import static poussecafe.util.Equality.referenceEquals;
 
 @SuppressWarnings("serial")
-public class MessageListener implements Serializable {
+public class MessageListener implements Serializable, Documented {
 
     public MessageListenerContainer container() {
         return container;
@@ -93,6 +93,13 @@ public class MessageListener implements Serializable {
         return aggregateName() + "." + methodName + "(" + consumedMessage.name() + ")";
     }
 
+    @Override
+    public Optional<String> documentation() {
+        return Optional.ofNullable(documentation);
+    }
+
+    private String documentation;
+
     public static class Builder {
 
         private MessageListener messageListener = new MessageListener();
@@ -143,6 +150,8 @@ public class MessageListener implements Serializable {
                     && !returnType.get().isPrimitive()) {
                 messageListener.returnTypeCardinality = returnTypeCardinality(returnType.get());
             }
+
+            messageListener.documentation = method.documentation().orElse(null);
 
             return this;
         }
@@ -214,6 +223,11 @@ public class MessageListener implements Serializable {
             messageListener.source = source;
             return this;
         }
+
+        public Builder withDocumentation(Optional<String> documentation) {
+            messageListener.documentation = documentation.orElse(null);
+            return this;
+        }
     }
 
     private MessageListener() {
@@ -232,6 +246,7 @@ public class MessageListener implements Serializable {
                 .append(returnTypeCardinality, other.returnTypeCardinality)
                 .append(runnerClass, other.runnerClass)
                 .append(source, other.source)
+                .append(documentation, other.documentation)
                 .build());
     }
 
@@ -247,6 +262,7 @@ public class MessageListener implements Serializable {
                 .append(returnTypeCardinality)
                 .append(runnerClass)
                 .append(source)
+                .append(documentation)
                 .build();
     }
 }

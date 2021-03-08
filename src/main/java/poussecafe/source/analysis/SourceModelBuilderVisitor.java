@@ -59,6 +59,18 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
         } else if(RunnerClass.isRunner(resolvedTypeDeclaration)) {
             visitRunner(resolvedTypeDeclaration);
             return false;
+        } else if(ModuleClass.isModule(resolvedTypeDeclaration)) {
+            visitModule(resolvedTypeDeclaration);
+            return false;
+        } else if(EntityClass.isEntity(resolvedTypeDeclaration)) {
+            visitEntity(resolvedTypeDeclaration);
+            return false;
+        } else if(ValueObjectClass.isValueObject(resolvedTypeDeclaration)) {
+            visitValueObject(resolvedTypeDeclaration);
+            return false;
+        } else if(MessageDefinitionType.isMessageDefinition(resolvedTypeDeclaration)) {
+            visitMessageDefinition(resolvedTypeDeclaration);
+            return false;
         } else {
             return false;
         }
@@ -86,14 +98,15 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
 
     private void createStandaloneAggregateRoot(ResolvedTypeDeclaration resolvedTypeDeclaration) {
         modelBuilder.addStandaloneAggregateRoot(new StandaloneAggregateRoot.Builder()
-                .typeComponent(typeComponent(resolvedTypeDeclaration.unresolvedName()))
+                .typeComponent(typeComponent(resolvedTypeDeclaration))
                 .build());
     }
 
-    private TypeComponent typeComponent(SafeClassName typeName) {
+    private TypeComponent typeComponent(ResolvedTypeDeclaration resolvedTypeDeclaration) {
         return new TypeComponent.Builder()
                 .source(compilationUnit.sourceFile())
-                .name(typeName)
+                .name(resolvedTypeDeclaration.unresolvedName())
+                .documentation(resolvedTypeDeclaration.documentation())
                 .build();
     }
 
@@ -103,6 +116,7 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
                 .name(processDefinition.processName())
                 .packageName(compilationUnit.packageName())
                 .source(compilationUnit.sourceFile())
+                .documentation(resolvedTypeDeclaration.documentation())
                 .build());
     }
 
@@ -120,7 +134,7 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
         }
         if(typeLevel == 0) {
             modelBuilder.addStandaloneAggregateFactory(new StandaloneAggregateFactory.Builder()
-                    .typeComponent(typeComponent(resolvedTypeDeclaration.unresolvedName()))
+                    .typeComponent(typeComponent(resolvedTypeDeclaration))
                     .build());
         }
         container = new MessageListenerContainer.Builder()
@@ -144,7 +158,7 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
         }
         if(typeLevel == 0) {
             modelBuilder.addStandaloneAggregateRepository(new StandaloneAggregateRepository.Builder()
-                    .typeComponent(typeComponent(resolvedTypeDeclaration.unresolvedName()))
+                    .typeComponent(typeComponent(resolvedTypeDeclaration))
                     .build());
         }
         container = new MessageListenerContainer.Builder()
@@ -178,8 +192,40 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
 
     private void visitAggregateContainer(ResolvedTypeDeclaration resolvedTypeDeclaration) {
         modelBuilder.addAggregateContainer(new AggregateContainer.Builder()
-                .typeComponent(typeComponent(resolvedTypeDeclaration.unresolvedName()))
+                .typeComponent(typeComponent(resolvedTypeDeclaration))
                 .build());
+    }
+
+    private void visitModule(ResolvedTypeDeclaration resolvedTypeDeclaration) {
+        modelBuilder.addModule(typeComponent(resolvedTypeDeclaration));
+    }
+
+    private void visitEntity(ResolvedTypeDeclaration resolvedTypeDeclaration) {
+        modelBuilder.addEntity(typeComponent(resolvedTypeDeclaration));
+    }
+
+    private void visitValueObject(ResolvedTypeDeclaration resolvedTypeDeclaration) {
+        modelBuilder.addValueObject(typeComponent(resolvedTypeDeclaration));
+    }
+
+    private void visitMessageDefinition(ResolvedTypeDeclaration resolvedTypeDeclaration) {
+        if(MessageDefinitionType.isCommand(resolvedTypeDeclaration)) {
+            modelBuilder.replaceCommand(new Command.Builder()
+                    .name(resolvedTypeDeclaration.unresolvedName().simpleName())
+                    .packageName(resolvedTypeDeclaration.unresolvedName().asName().qualifier())
+                    .source(compilationUnit.sourceFile())
+                    .documentation(resolvedTypeDeclaration.documentation())
+                    .build());
+        } else if(MessageDefinitionType.isDomainEvent(resolvedTypeDeclaration)) {
+            modelBuilder.replaceDomainEvent(new DomainEvent.Builder()
+                    .name(resolvedTypeDeclaration.unresolvedName().simpleName())
+                    .packageName(resolvedTypeDeclaration.unresolvedName().asName().qualifier())
+                    .source(compilationUnit.sourceFile())
+                    .documentation(resolvedTypeDeclaration.documentation())
+                    .build());
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Override
@@ -225,13 +271,13 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
 
     private void registerMessage(Message message, ResolvedTypeName messageTypeName) {
         if(message.type() == MessageType.COMMAND) {
-            modelBuilder.addCommand(new Command.Builder()
+            modelBuilder.addCommandIfAbsent(new Command.Builder()
                     .name(message.name())
                     .packageName(messageTypeName.packageName())
                     .source(messageTypeName.resolvedClass().source())
                     .build());
         } else if(message.type() == MessageType.DOMAIN_EVENT) {
-            modelBuilder.addEvent(new DomainEvent.Builder()
+            modelBuilder.addEventIfAbsent(new DomainEvent.Builder()
                     .name(message.name())
                     .packageName(messageTypeName.packageName())
                     .source(messageTypeName.resolvedClass().source())
