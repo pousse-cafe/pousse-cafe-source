@@ -62,6 +62,9 @@ public class ResolvedType {
     public ResolvedTypeName toTypeName() {
         if(isSimpleType()) {
             return resolver.resolve((SimpleType) type);
+        } else if(isParametrized()) {
+            var parametrizedType = (ParameterizedType) type;
+            return resolver.resolve((SimpleType) parametrizedType.getType());
         } else {
             throw new UnsupportedOperationException();
         }

@@ -26,7 +26,7 @@ import poussecafe.source.testmodel.process.Process1;
 @Aggregate
 public class Aggregate1 {
 
-    public static class Root extends AggregateRoot<String, Root.Attributes> {
+    public static class Root extends AggregateRoot<Identifier1, Root.Attributes> {
 
         static class SomeInnerClass {
 
@@ -43,7 +43,7 @@ public class Aggregate1 {
 
         }
 
-        public static interface Attributes extends EntityAttributes<String> {
+        public static interface Attributes extends EntityAttributes<Identifier1> {
 
             Attribute<ValueObject1> valueObject1();
 
@@ -51,7 +51,7 @@ public class Aggregate1 {
         }
     }
 
-    public class Factory extends AggregateFactory<String, Root, Root.Attributes> {
+    public class Factory extends AggregateFactory<Identifier1, Root, Root.Attributes> {
 
         @MessageListener(processes = Process1.class)
         @ProducesEvent(Event5.class)
@@ -72,7 +72,7 @@ public class Aggregate1 {
         }
     }
 
-    public class Repository extends AggregateRepository<String, Root, Root.Attributes> {
+    public class Repository extends AggregateRepository<Identifier1, Root, Root.Attributes> {
 
     }
 }

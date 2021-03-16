@@ -39,11 +39,15 @@ public class ResolvedTypeName {
     }
 
     public String qualifiedName() {
-        return resolvedClass.name().qualified();
+        return qualifiedClassName().qualified();
+    }
+
+    public ClassName qualifiedClassName() {
+        return resolvedClass.name();
     }
 
     public String packageName() {
-        return resolvedClass.name().getQualifier().toString();
+        return qualifiedClassName().getQualifier().toString();
     }
 
     public static class Builder {

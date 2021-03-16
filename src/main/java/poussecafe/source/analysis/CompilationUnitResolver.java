@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import poussecafe.attribute.entity.EntityMapAttribute;
 import poussecafe.discovery.AbstractMessage;
 import poussecafe.discovery.Aggregate;
 import poussecafe.discovery.DataAccessImplementation;
@@ -356,6 +357,8 @@ public class CompilationUnitResolver implements Resolver {
     public static final String MODULE_INTERFACE = Module.class.getCanonicalName();
 
     public static final String VALUE_OBJECT_INTERFACE = ValueObject.class.getCanonicalName();
+
+    public static final String ENTITY_MAP_ATTRIBUTE_INTERFACE = EntityMapAttribute.class.getCanonicalName();
 
     public static class Builder {
 

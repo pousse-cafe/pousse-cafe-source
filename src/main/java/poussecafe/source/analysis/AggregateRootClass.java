@@ -15,20 +15,35 @@ public class AggregateRootClass {
         if(!isAggregateRoot(resolvedTypeDeclaration)) {
             throw new IllegalArgumentException();
         }
-        name = resolvedTypeDeclaration.name();
+        this.resolvedTypeDeclaration = resolvedTypeDeclaration;
     }
 
-    private ResolvedTypeName name;
+    private ResolvedTypeDeclaration resolvedTypeDeclaration;
 
     public String aggregateName() {
         if(isInnerClass()) {
-            return name.resolvedClass().declaringClass().orElseThrow().name().simple();
+            return name().resolvedClass().declaringClass().orElseThrow().name().simple();
         } else {
-            return NamingConventions.aggregateNameFromSimpleRootName(name.simpleName());
+            return NamingConventions.aggregateNameFromSimpleRootName(name().simpleName());
         }
     }
 
+    private ResolvedTypeName name() {
+        return resolvedTypeDeclaration.name();
+    }
+
     public boolean isInnerClass() {
-        return name.resolvedClass().declaringClass().isPresent();
+        return name().resolvedClass().declaringClass().isPresent();
+    }
+
+    public ResolvedTypeDeclaration typeDeclaration() {
+        return resolvedTypeDeclaration;
+    }
+
+    public Optional<ClassName> identifierClassName() {
+        return resolvedTypeDeclaration.superclassType()
+                .filter(type -> type.isParametrized())
+                .filter(type -> type.typeParameters().size() > 0)
+                .map(type -> type.typeParameters().get(0).toTypeName().qualifiedClassName());
     }
 }

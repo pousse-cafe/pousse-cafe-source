@@ -246,6 +246,7 @@ public class SourceModelBuilder implements Serializable {
             aggregate.innerRoot(false);
             aggregate.standaloneRootSource(Optional.of(root.typeComponent().source()));
             aggregate.documentation(root.typeComponent().documentation());
+            aggregate.identifierClassName(root.identifierClassName());
         }
 
         for(StandaloneAggregateRepository repository : standaloneAggregateRepositories.values()) {
@@ -260,6 +261,9 @@ public class SourceModelBuilder implements Serializable {
                     name -> newBuilder(name, container.typeComponent().typeName().rootClassName().qualifier()));
             aggregate.containerSource(Optional.of(container.typeComponent().source()));
             aggregate.documentation(container.typeComponent().documentation());
+            if(container.identifierClassName().isPresent()) {
+                aggregate.identifierClassName(container.identifierClassName());
+            }
         }
     }
 

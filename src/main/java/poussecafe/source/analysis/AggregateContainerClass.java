@@ -1,5 +1,6 @@
 package poussecafe.source.analysis;
 
+import java.util.Optional;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class AggregateContainerClass {
@@ -17,5 +18,16 @@ public class AggregateContainerClass {
 
     public String aggregateName() {
         return resolvedTypeDeclaration.unresolvedName().simpleName();
+    }
+
+    public Optional<ClassName> identifierClassName() {
+        return resolvedTypeDeclaration.innerTypes().stream()
+                .filter(type -> AggregateRootClass.isAggregateRoot(type))
+                .findFirst()
+                .map(type -> type.superclassType())
+                .filter(Optional::isPresent).map(Optional::orElseThrow)
+                .filter(type -> type.isParametrized())
+                .filter(type -> type.typeParameters().size() > 0)
+                .map(type -> type.typeParameters().get(0).toTypeName().qualifiedClassName());
     }
 }

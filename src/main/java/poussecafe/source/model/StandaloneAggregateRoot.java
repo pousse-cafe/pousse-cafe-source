@@ -1,6 +1,8 @@
 package poussecafe.source.model;
 
 import java.io.Serializable;
+import java.util.Optional;
+import poussecafe.source.analysis.ClassName;
 import poussecafe.source.generation.NamingConventions;
 
 import static java.util.Objects.requireNonNull;
@@ -19,6 +21,12 @@ public class StandaloneAggregateRoot implements Serializable, WithTypeComponent 
         return NamingConventions.aggregateNameFromSimpleRootName(typeComponent.typeName().rootClassName().simple());
     }
 
+    public Optional<ClassName> identifierClassName() {
+        return Optional.ofNullable(identifierClassName);
+    }
+
+    private ClassName identifierClassName;
+
     public static class Builder {
 
         private StandaloneAggregateRoot aggregate = new StandaloneAggregateRoot();
@@ -30,6 +38,11 @@ public class StandaloneAggregateRoot implements Serializable, WithTypeComponent 
 
         public Builder typeComponent(TypeComponent typeComponent) {
             aggregate.typeComponent = typeComponent;
+            return this;
+        }
+
+        public Builder identifierClassName(Optional<ClassName> identifierClassName) {
+            aggregate.identifierClassName = identifierClassName.orElse(null);
             return this;
         }
     }

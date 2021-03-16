@@ -1,6 +1,8 @@
 package poussecafe.source.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -32,6 +34,8 @@ public class TypeComponent implements Serializable, Documented {
         return Optional.ofNullable(documentation);
     }
 
+    private List<TypeReference> references = new ArrayList<>();
+
     public static class Builder {
 
         private TypeComponent component = new TypeComponent();
@@ -56,6 +60,16 @@ public class TypeComponent implements Serializable, Documented {
             component.documentation = documentation.orElse(null);
             return this;
         }
+
+        public Builder reference(TypeReference reference) {
+            component.references.add(reference);
+            return this;
+        }
+
+        public Builder references(List<TypeReference> references) {
+            references.forEach(this::reference);
+            return this;
+        }
     }
 
     private TypeComponent() {
@@ -68,6 +82,7 @@ public class TypeComponent implements Serializable, Documented {
                 .append(source, other.source)
                 .append(typeName, other.typeName)
                 .append(documentation, other.documentation)
+                .append(references, other.references)
                 .build());
     }
 
@@ -77,6 +92,7 @@ public class TypeComponent implements Serializable, Documented {
                 .append(source)
                 .append(typeName)
                 .append(documentation)
+                .append(references)
                 .build();
     }
 }

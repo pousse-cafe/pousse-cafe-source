@@ -85,6 +85,12 @@ public class Aggregate implements Serializable {
 
     private String documentation;
 
+    public Optional<ClassName> identifierClassName() {
+        return Optional.ofNullable(identifierClassName);
+    }
+
+    private ClassName identifierClassName;
+
     public static class Builder implements Serializable {
 
         private Aggregate aggregate = new Aggregate();
@@ -116,6 +122,9 @@ public class Aggregate implements Serializable {
             aggregate.standaloneFactorySource = other.standaloneFactorySource;
             aggregate.standaloneRootSource = other.standaloneRootSource;
             aggregate.standaloneRepositorySource = other.standaloneRepositorySource;
+
+            aggregate.documentation = other.documentation;
+            aggregate.identifierClassName = other.identifierClassName;
 
             return this;
         }
@@ -214,6 +223,11 @@ public class Aggregate implements Serializable {
 
         public Builder documentation(Optional<String> documentation) {
             aggregate.documentation = documentation.orElse(null);
+            return this;
+        }
+
+        public Builder identifierClassName(Optional<ClassName> identifierClassName) {
+            aggregate.identifierClassName = identifierClassName.orElse(null);
             return this;
         }
     }

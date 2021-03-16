@@ -84,7 +84,7 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
         if(typeLevel == 0) {
             aggregateName = aggregateRootClass.aggregateName();
             identifier = resolvedTypeDeclaration.name().simpleName();
-            createStandaloneAggregateRoot(resolvedTypeDeclaration);
+            createStandaloneAggregateRoot(aggregateRootClass);
         } else {
             aggregateName = aggregateNameForInnerClass(resolvedTypeDeclaration);
             identifier = innerClassQualifiedName(resolvedTypeDeclaration);
@@ -96,17 +96,20 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
                 .build();
     }
 
-    private void createStandaloneAggregateRoot(ResolvedTypeDeclaration resolvedTypeDeclaration) {
+    private void createStandaloneAggregateRoot(AggregateRootClass aggregateRootClass) {
         modelBuilder.addStandaloneAggregateRoot(new StandaloneAggregateRoot.Builder()
-                .typeComponent(typeComponent(resolvedTypeDeclaration))
+                .typeComponent(typeComponent(aggregateRootClass.typeDeclaration()))
+                .identifierClassName(aggregateRootClass.identifierClassName())
                 .build());
     }
 
     private TypeComponent typeComponent(ResolvedTypeDeclaration resolvedTypeDeclaration) {
+        var referencesDiscovery = new TypeReferencesDiscovery(resolvedTypeDeclaration);
         return new TypeComponent.Builder()
                 .source(compilationUnit.sourceFile())
                 .name(resolvedTypeDeclaration.unresolvedName())
                 .documentation(resolvedTypeDeclaration.documentation())
+                .references(referencesDiscovery.references())
                 .build();
     }
 
@@ -191,8 +194,10 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
     }
 
     private void visitAggregateContainer(ResolvedTypeDeclaration resolvedTypeDeclaration) {
+        var containerClass = new AggregateContainerClass(resolvedTypeDeclaration);
         modelBuilder.addAggregateContainer(new AggregateContainer.Builder()
                 .typeComponent(typeComponent(resolvedTypeDeclaration))
+                .identifierClassName(containerClass.identifierClassName())
                 .build());
     }
 

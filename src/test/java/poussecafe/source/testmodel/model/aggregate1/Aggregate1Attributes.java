@@ -6,7 +6,7 @@ import poussecafe.attribute.entity.EntityAttribute;
 public class Aggregate1Attributes implements Aggregate1.Root.Attributes {
 
     @Override
-    public Attribute<String> identifier() {
+    public Attribute<Identifier1> identifier() {
         return null;
     }
 

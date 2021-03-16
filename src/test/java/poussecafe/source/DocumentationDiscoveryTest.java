@@ -1,7 +1,9 @@
 package poussecafe.source;
 
 import java.io.IOException;
+import java.util.Optional;
 import org.junit.Test;
+import poussecafe.source.analysis.ClassName;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,22 +25,32 @@ public class DocumentationDiscoveryTest extends DiscoveryTest {
                 .findFirst().orElseThrow();
         assertTrue(valueObject.documentation().isPresent());
         assertThat(valueObject.documentation().orElseThrow(), equalTo("ValueObject1 documentation."));
+        assertThat(valueObject.typeName().qualifiedName(), equalTo(basePackage() + ".model.aggregate1.ValueObject1"));
     }
 
     @Test
-    public void aggregateHasExpectedDocumentation() throws IOException {
+    public void aggregatesHaveExpectedDocumentation() throws IOException {
         givenModelBuilder();
         whenIncludingTestModelTree();
-        thenAggregateHasExpectedDocumentation();
+        thenAggregatesHaveExpectedDocumentation();
     }
 
-    private void thenAggregateHasExpectedDocumentation() {
+    private void thenAggregatesHaveExpectedDocumentation() {
         var model = model();
-        var aggregate = model.aggregates().stream()
+
+        var aggregate1 = model.aggregates().stream()
                 .filter(item -> item.simpleName().equals("Aggregate1"))
                 .findFirst().orElseThrow();
-        assertTrue(aggregate.documentation().isPresent());
-        assertThat(aggregate.documentation().orElseThrow(), equalTo("Aggregate1 documentation."));
+        assertTrue(aggregate1.documentation().isPresent());
+        assertThat(aggregate1.documentation().orElseThrow(), equalTo("Aggregate1 documentation."));
+        ClassName identifierClassName = new ClassName(basePackage() + ".model.aggregate1.Identifier1");
+        assertThat(aggregate1.identifierClassName(), equalTo(Optional.of(identifierClassName)));
+
+        var aggregate2 = model.aggregates().stream()
+                .filter(item -> item.simpleName().equals("Aggregate2"))
+                .findFirst().orElseThrow();
+        ClassName identifier2ClassName = new ClassName(basePackage() + ".model.aggregate2.Identifier2");
+        assertThat(aggregate2.identifierClassName(), equalTo(Optional.of(identifier2ClassName)));
     }
 
     @Test

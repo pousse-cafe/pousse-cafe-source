@@ -7,7 +7,7 @@ import poussecafe.source.testmodel.commands.Command2;
 import poussecafe.source.testmodel.model.events.Event6;
 import poussecafe.source.testmodel.process.Process1;
 
-public class Aggregate2Repository extends AggregateRepository<String, Aggregate2Root, Aggregate2Root.Attributes> {
+public class Aggregate2Repository extends AggregateRepository<Identifier2, Aggregate2Root, Aggregate2Root.Attributes> {
 
     @MessageListener(processes = Process1.class)
     @ProducesEvent(Event6.class)

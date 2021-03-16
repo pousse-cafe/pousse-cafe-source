@@ -39,7 +39,7 @@ public class ResolvedTypeDeclaration {
 
     private TypeDeclaration declaration;
 
-    private Resolver resolver;
+    private TypeDeclarationResolver resolver;
 
     public ResolvedTypeName name() {
         if(resolvedName == null) {
@@ -143,6 +143,12 @@ public class ResolvedTypeDeclaration {
                 .map(javadoc -> new JavaDocStringBuilder().withJavadoc(javadoc).build());
     }
 
+    public List<ResolvedMethod> methods() {
+        return Arrays.stream(typeDeclaration().getMethods())
+                .map(resolver::resolve)
+                .collect(toList());
+    }
+
     public static class Builder {
 
         private ResolvedTypeDeclaration type = new ResolvedTypeDeclaration();
@@ -159,7 +165,7 @@ public class ResolvedTypeDeclaration {
             return this;
         }
 
-        public Builder withResolver(Resolver resolver) {
+        public Builder withResolver(TypeDeclarationResolver resolver) {
             type.resolver = resolver;
             return this;
         }
