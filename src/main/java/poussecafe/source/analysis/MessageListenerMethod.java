@@ -66,7 +66,7 @@ public class MessageListenerMethod implements Documented {
     }
 
     @Override
-    public Documentation documented() {
-        return method.documented();
+    public Documentation documentation() {
+        return method.documentation();
     }
 }

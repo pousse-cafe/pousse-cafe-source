@@ -83,7 +83,7 @@ public class ResolvedMethod implements Documented {
     private ResolvedTypeDeclaration declaringType;
 
     @Override
-    public Documentation documented() {
+    public Documentation documentation() {
         return DocumentationFactory.documentation(declaration.getJavadoc(), asAnnotatedElement());
     }
 

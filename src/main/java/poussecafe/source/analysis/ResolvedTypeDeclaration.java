@@ -140,7 +140,7 @@ public class ResolvedTypeDeclaration implements Documented {
     }
 
     @Override
-    public Documentation documented() {
+    public Documentation documentation() {
         return DocumentationFactory.documentation(declaration.getJavadoc(), asAnnotatedElement());
     }
 

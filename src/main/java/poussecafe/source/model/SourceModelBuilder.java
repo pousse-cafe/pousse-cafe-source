@@ -245,7 +245,7 @@ public class SourceModelBuilder implements Serializable {
                     name -> newBuilder(name, root.typeComponent().typeName().rootClassName().qualifier()));
             aggregate.innerRoot(false);
             aggregate.standaloneRootSource(Optional.of(root.typeComponent().source()));
-            aggregate.documentation(root.typeComponent().documented());
+            aggregate.documentation(root.typeComponent().documentation());
             aggregate.identifierClassName(root.identifierClassName());
         }
 
@@ -260,7 +260,7 @@ public class SourceModelBuilder implements Serializable {
             var aggregate = aggregates.computeIfAbsent(container.aggregateName(),
                     name -> newBuilder(name, container.typeComponent().typeName().rootClassName().qualifier()));
             aggregate.containerSource(Optional.of(container.typeComponent().source()));
-            aggregate.documentation(container.typeComponent().documented());
+            aggregate.documentation(container.typeComponent().documentation());
             if(container.identifierClassName().isPresent()) {
                 aggregate.identifierClassName(container.identifierClassName());
             }

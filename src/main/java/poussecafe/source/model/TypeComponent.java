@@ -27,11 +27,11 @@ public class TypeComponent implements Serializable, Documented {
         return typeName;
     }
 
-    private Documentation description = Documentation.empty();
+    private Documentation documentation = Documentation.empty();
 
     @Override
-    public Documentation documented() {
-        return description;
+    public Documentation documentation() {
+        return documentation;
     }
 
     public List<TypeReference> references() {
@@ -47,7 +47,7 @@ public class TypeComponent implements Serializable, Documented {
         public TypeComponent build() {
             requireNonNull(component.typeName);
             requireNonNull(component.source);
-            requireNonNull(component.description);
+            requireNonNull(component.documentation);
             return component;
         }
 
@@ -62,7 +62,7 @@ public class TypeComponent implements Serializable, Documented {
         }
 
         public Builder documentation(Documentation documentation) {
-            component.description = documentation;
+            component.documentation = documentation;
             return this;
         }
 
@@ -86,7 +86,7 @@ public class TypeComponent implements Serializable, Documented {
         return referenceEquals(this, obj).orElse(other -> new EqualsBuilder()
                 .append(source, other.source)
                 .append(typeName, other.typeName)
-                .append(description, other.description)
+                .append(documentation, other.documentation)
                 .append(references, other.references)
                 .build());
     }
@@ -96,7 +96,7 @@ public class TypeComponent implements Serializable, Documented {
         return new HashCodeBuilder()
                 .append(source)
                 .append(typeName)
-                .append(description)
+                .append(documentation)
                 .append(references)
                 .build();
     }

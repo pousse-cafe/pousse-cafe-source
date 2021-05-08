@@ -23,7 +23,7 @@ public class DocumentationDiscoveryTest extends DiscoveryTest {
         var valueObject = model.valueObjects().stream()
                 .filter(item -> item.typeName().simpleName().equals("ValueObject1"))
                 .findFirst().orElseThrow();
-        assertThat(valueObject.documented(), equalTo(new Documentation.Builder()
+        assertThat(valueObject.documentation(), equalTo(new Documentation.Builder()
                 .description("ValueObject1 documentation.")
                 .shortDescription("ValueObject1 short")
                 .build()));
@@ -69,7 +69,7 @@ public class DocumentationDiscoveryTest extends DiscoveryTest {
         var entity = model.entities().stream()
                 .filter(item -> item.typeName().simpleName().equals("Entity1"))
                 .findFirst().orElseThrow();
-        assertThat(entity.documented(), equalTo(new Documentation.Builder()
+        assertThat(entity.documentation(), equalTo(new Documentation.Builder()
                 .description("Entity1 documentation.")
                 .shortDescription("Entity1 short")
                 .build()));
