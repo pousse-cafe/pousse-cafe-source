@@ -6,11 +6,12 @@ import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
-import poussecafe.source.JavaDocStringBuilder;
+import poussecafe.source.model.Documentation;
+import poussecafe.source.model.Documented;
 
 import static java.util.Objects.requireNonNull;
 
-public class ResolvedMethod {
+public class ResolvedMethod implements Documented {
 
     public AnnotatedElement<MethodDeclaration> asAnnotatedElement() {
         return new AnnotatedElement.Builder<MethodDeclaration>()
@@ -81,9 +82,9 @@ public class ResolvedMethod {
 
     private ResolvedTypeDeclaration declaringType;
 
-    public Optional<String> documentation() {
-        return Optional.ofNullable(declaration.getJavadoc())
-                .map(javadoc -> new JavaDocStringBuilder().withJavadoc(javadoc).build());
+    @Override
+    public Documentation documented() {
+        return DocumentationFactory.documentation(declaration.getJavadoc(), asAnnotatedElement());
     }
 
     public static class Builder {

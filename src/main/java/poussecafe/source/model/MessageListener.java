@@ -94,11 +94,11 @@ public class MessageListener implements Serializable, Documented {
     }
 
     @Override
-    public Optional<String> documentation() {
-        return Optional.ofNullable(documentation);
+    public Documentation documented() {
+        return description;
     }
 
-    private String documentation;
+    private Documentation description = Documentation.empty();
 
     public static class Builder {
 
@@ -109,6 +109,7 @@ public class MessageListener implements Serializable, Documented {
             requireNonNull(messageListener.methodName);
             requireNonNull(messageListener.consumedMessage);
             requireNonNull(messageListener.source);
+            requireNonNull(messageListener.description);
 
             if(messageListener.container.type().isFactory()
                     && messageListener.returnTypeCardinality == null) {
@@ -151,7 +152,7 @@ public class MessageListener implements Serializable, Documented {
                 messageListener.returnTypeCardinality = returnTypeCardinality(returnType.get());
             }
 
-            messageListener.documentation = method.documentation().orElse(null);
+            messageListener.description = method.documented();
 
             return this;
         }
@@ -224,8 +225,8 @@ public class MessageListener implements Serializable, Documented {
             return this;
         }
 
-        public Builder withDocumentation(Optional<String> documentation) {
-            messageListener.documentation = documentation.orElse(null);
+        public Builder withDocumentation(Documentation documentation) {
+            messageListener.description = documentation;
             return this;
         }
     }
@@ -246,7 +247,7 @@ public class MessageListener implements Serializable, Documented {
                 .append(returnTypeCardinality, other.returnTypeCardinality)
                 .append(runnerClass, other.runnerClass)
                 .append(source, other.source)
-                .append(documentation, other.documentation)
+                .append(description, other.description)
                 .build());
     }
 
@@ -262,7 +263,7 @@ public class MessageListener implements Serializable, Documented {
                 .append(returnTypeCardinality)
                 .append(runnerClass)
                 .append(source)
-                .append(documentation)
+                .append(description)
                 .build();
     }
 }

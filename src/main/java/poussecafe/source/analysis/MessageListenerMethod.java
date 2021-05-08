@@ -2,11 +2,13 @@ package poussecafe.source.analysis;
 
 import java.util.List;
 import java.util.Optional;
+import poussecafe.source.model.Documentation;
+import poussecafe.source.model.Documented;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
-public class MessageListenerMethod {
+public class MessageListenerMethod implements Documented {
 
     public static boolean isMessageListener(ResolvedMethod annotatedElement) {
         return annotatedElement.asAnnotatedElement().findAnnotation(CompilationUnitResolver.MESSAGE_LISTENER_ANNOTATION_CLASS).isPresent();
@@ -63,7 +65,8 @@ public class MessageListenerMethod {
         return method.returnType();
     }
 
-    public Optional<String> documentation() {
-        return method.documentation();
+    @Override
+    public Documentation documented() {
+        return method.documented();
     }
 }

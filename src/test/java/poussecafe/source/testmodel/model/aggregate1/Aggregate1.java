@@ -11,6 +11,7 @@ import poussecafe.domain.AggregateFactory;
 import poussecafe.domain.AggregateRepository;
 import poussecafe.domain.AggregateRoot;
 import poussecafe.domain.EntityAttributes;
+import poussecafe.source.ShortDescription;
 import poussecafe.source.testmodel.commands.Command1;
 import poussecafe.source.testmodel.commands.Command3;
 import poussecafe.source.testmodel.commands.Command4;
@@ -24,6 +25,7 @@ import poussecafe.source.testmodel.process.Process1;
  * Aggregate1 documentation.
  */
 @Aggregate
+@ShortDescription("Aggregate1 short")
 public class Aggregate1 {
 
     public static class Root extends AggregateRoot<Identifier1, Root.Attributes> {

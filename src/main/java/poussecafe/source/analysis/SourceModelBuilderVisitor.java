@@ -108,7 +108,7 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
         return new TypeComponent.Builder()
                 .source(compilationUnit.sourceFile())
                 .name(resolvedTypeDeclaration.unresolvedName())
-                .documentation(resolvedTypeDeclaration.documentation())
+                .documentation(resolvedTypeDeclaration.documented())
                 .references(referencesDiscovery.references())
                 .build();
     }
@@ -119,7 +119,7 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
                 .name(processDefinition.processName())
                 .packageName(compilationUnit.packageName())
                 .source(compilationUnit.sourceFile())
-                .documentation(resolvedTypeDeclaration.documentation())
+                .documentation(resolvedTypeDeclaration.documented())
                 .build());
     }
 
@@ -219,14 +219,14 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
                     .name(resolvedTypeDeclaration.unresolvedName().simpleName())
                     .packageName(resolvedTypeDeclaration.unresolvedName().asName().qualifier())
                     .source(compilationUnit.sourceFile())
-                    .documentation(resolvedTypeDeclaration.documentation())
+                    .documentation(resolvedTypeDeclaration.documented())
                     .build());
         } else if(MessageDefinitionType.isDomainEvent(resolvedTypeDeclaration)) {
             modelBuilder.replaceDomainEvent(new DomainEvent.Builder()
                     .name(resolvedTypeDeclaration.unresolvedName().simpleName())
                     .packageName(resolvedTypeDeclaration.unresolvedName().asName().qualifier())
                     .source(compilationUnit.sourceFile())
-                    .documentation(resolvedTypeDeclaration.documentation())
+                    .documentation(resolvedTypeDeclaration.documented())
                     .build());
         } else {
             throw new UnsupportedOperationException();

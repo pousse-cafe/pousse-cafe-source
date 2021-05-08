@@ -7,12 +7,13 @@ import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
-import poussecafe.source.JavaDocStringBuilder;
+import poussecafe.source.model.Documentation;
+import poussecafe.source.model.Documented;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-public class ResolvedTypeDeclaration {
+public class ResolvedTypeDeclaration implements Documented {
 
     public Optional<ResolvedTypeName> superclass() {
         Type type = declaration.getSuperclassType();
@@ -138,9 +139,9 @@ public class ResolvedTypeDeclaration {
         return innerClassResolver.resolvedTypeDeclaration();
     }
 
-    public Optional<String> documentation() {
-        return Optional.ofNullable(declaration.getJavadoc())
-                .map(javadoc -> new JavaDocStringBuilder().withJavadoc(javadoc).build());
+    @Override
+    public Documentation documented() {
+        return DocumentationFactory.documentation(declaration.getJavadoc(), asAnnotatedElement());
     }
 
     public List<ResolvedMethod> methods() {

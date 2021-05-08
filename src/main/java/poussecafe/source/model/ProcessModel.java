@@ -1,7 +1,6 @@
 package poussecafe.source.model;
 
 import java.io.Serializable;
-import java.util.Optional;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import poussecafe.source.Source;
@@ -20,6 +19,7 @@ public class ProcessModel extends ComponentWithType implements Serializable {
             requireNonNull(process.name);
             requireNonNull(process.packageName);
             requireNonNull(process.source);
+            requireNonNull(process.documentation);
             return process;
         }
 
@@ -38,8 +38,8 @@ public class ProcessModel extends ComponentWithType implements Serializable {
             return this;
         }
 
-        public Builder documentation(Optional<String> documentation) {
-            process.documentation = documentation.orElse(null);
+        public Builder documentation(Documentation documentation) {
+            process.documentation = documentation;
             return this;
         }
     }
