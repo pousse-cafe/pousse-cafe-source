@@ -1,9 +1,13 @@
 package poussecafe.source.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import poussecafe.source.Source;
 import poussecafe.source.analysis.ClassName;
+import poussecafe.source.analysis.SafeClassName;
 import poussecafe.source.generation.AggregatePackage;
 
 import static java.util.Objects.requireNonNull;
@@ -11,20 +15,20 @@ import static java.util.Objects.requireNonNull;
 @SuppressWarnings("serial")
 public class Aggregate implements Serializable {
 
-    protected String name;
-
-    public String simpleName() {
+    public String name() {
         return name;
     }
 
-    protected String packageName;
+    private String name;
 
-    public String packageName() {
-        return packageName;
+    public SafeClassName className() {
+        return className;
     }
 
-    public ClassName name() {
-        return new ClassName(packageName, name);
+    private SafeClassName className;
+
+    public String packageName() {
+        return className.rootClassName().qualifier();
     }
 
     public boolean innerFactory() {
@@ -76,20 +80,26 @@ public class Aggregate implements Serializable {
     private Source standaloneRepositorySource;
 
     public AggregatePackage aggregatePackage() {
-        return new AggregatePackage(packageName, name);
+        return new AggregatePackage(className.rootClassName().qualifier(), name);
     }
 
     public Documentation documentation() {
         return documentation;
     }
 
-    private Documentation documentation;
+    private Documentation documentation = Documentation.empty();
 
-    public Optional<ClassName> identifierClassName() {
-        return Optional.ofNullable(identifierClassName);
+    public Optional<ClassName> rootIdentifierClassName() {
+        return Optional.ofNullable(rootIdentifierClassName);
     }
 
-    private ClassName identifierClassName;
+    private ClassName rootIdentifierClassName;
+
+    public List<TypeReference> rootReferences() {
+        return Collections.unmodifiableList(rootReferences);
+    }
+
+    private List<TypeReference> rootReferences = new ArrayList<>();
 
     public static class Builder implements Serializable {
 
@@ -97,7 +107,8 @@ public class Aggregate implements Serializable {
 
         public Aggregate build() {
             requireNonNull(aggregate.name);
-            requireNonNull(aggregate.packageName);
+            requireNonNull(aggregate.className, "Aggregate " + aggregate.name + " lacks a class");
+            requireNonNull(aggregate.documentation, "Aggregate " + aggregate.name + " lacks documentation");
 
             aggregate.innerFactory = innerFactory.booleanValue();
             aggregate.innerRoot = innerRoot.booleanValue();
@@ -106,13 +117,17 @@ public class Aggregate implements Serializable {
             return aggregate;
         }
 
+        public boolean isValid() {
+            return aggregate.name != null && aggregate.className != null && aggregate.documentation != null;
+        }
+
         public Optional<String> name() {
             return Optional.ofNullable(aggregate.name);
         }
 
         public Builder startingFrom(Aggregate other) {
             aggregate.name = other.name;
-            aggregate.packageName = other.packageName;
+            aggregate.className = other.className;
 
             innerFactory = other.innerFactory;
             innerRoot = other.innerRoot;
@@ -124,7 +139,7 @@ public class Aggregate implements Serializable {
             aggregate.standaloneRepositorySource = other.standaloneRepositorySource;
 
             aggregate.documentation = other.documentation;
-            aggregate.identifierClassName = other.identifierClassName;
+            aggregate.rootIdentifierClassName = other.rootIdentifierClassName;
 
             return this;
         }
@@ -134,8 +149,8 @@ public class Aggregate implements Serializable {
             return this;
         }
 
-        public Builder packageName(String packageName) {
-            aggregate.packageName = packageName;
+        public Builder className(SafeClassName className) {
+            aggregate.className = className;
             return this;
         }
 
@@ -226,8 +241,13 @@ public class Aggregate implements Serializable {
             return this;
         }
 
-        public Builder identifierClassName(Optional<ClassName> identifierClassName) {
-            aggregate.identifierClassName = identifierClassName.orElse(null);
+        public Builder rootIdentifierClassName(Optional<ClassName> identifierClassName) {
+            aggregate.rootIdentifierClassName = identifierClassName.orElse(null);
+            return this;
+        }
+
+        public Builder rootReferences(List<TypeReference> references) {
+            aggregate.rootReferences.addAll(references);
             return this;
         }
     }

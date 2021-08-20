@@ -11,6 +11,7 @@ import poussecafe.source.model.ProducedEvent;
 import poussecafe.source.model.SourceModel;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -55,7 +56,7 @@ public class ModelAssertions {
                 .message(Message.domainEvent("Event2"))
                 .required(true)
                 .build()));
-        assertThat(listener1.orElseThrow().consumesFromExternal(), equalTo(Optional.of("External1")));
+        assertThat(listener1.orElseThrow().consumesFromExternal(), equalTo(singletonList("External1")));
         assertThat(listener1.orElseThrow().runnerName(), equalTo(Optional.of("Process1Listener1Runner")));
 
         Optional<MessageListener> listener2 = aggregateMessageListener("Aggregate2", "process1Listener2", "Event2");

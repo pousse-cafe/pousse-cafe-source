@@ -3,6 +3,7 @@ package poussecafe.source.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -63,11 +64,11 @@ public class MessageListener implements Serializable, Documented {
 
     private String runnerClass;
 
-    public Optional<String> consumesFromExternal() {
-        return Optional.ofNullable(consumesFromExternal);
+    public List<String> consumesFromExternal() {
+        return Collections.unmodifiableList(consumesFromExternal);
     }
 
-    private String consumesFromExternal;
+    private List<String> consumesFromExternal = new ArrayList<>();
 
     public Optional<Cardinality> returnTypeCardinality() {
         return Optional.ofNullable(returnTypeCardinality);
@@ -134,7 +135,7 @@ public class MessageListener implements Serializable, Documented {
             messageListener.methodName = methodName;
             messageListener.consumedMessage = Message.ofTypeName(method.consumedMessage().orElseThrow());
 
-            messageListener.consumesFromExternal = method.consumesFromExternal().orElse(null);
+            messageListener.consumesFromExternal.addAll(method.consumesFromExternal());
             List<ResolvedTypeName> processes = method.processes();
             processes.stream().map(ResolvedTypeName::simpleName).forEach(processNames::add);
 
@@ -203,8 +204,8 @@ public class MessageListener implements Serializable, Documented {
             return this;
         }
 
-        public Builder withConsumesFromExternal(Optional<String> consumesFromExternal) {
-            messageListener.consumesFromExternal = consumesFromExternal.orElse(null);
+        public Builder withConsumesFromExternal(List<String> consumesFromExternal) {
+            messageListener.consumesFromExternal.addAll(consumesFromExternal);
             return this;
         }
 

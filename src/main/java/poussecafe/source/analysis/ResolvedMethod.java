@@ -73,7 +73,16 @@ public class ResolvedMethod implements Documented {
         return new Modifiers.Builder()
                 .modifiers(declaration.modifiers())
                 .resolver(resolver)
+                .target(target())
                 .build();
+    }
+
+    private ModifiersTarget target() {
+        if(declaringType.typeDeclaration().isInterface()) {
+            return ModifiersTarget.INTERFACE_METHOD;
+        } else {
+            return ModifiersTarget.OTHER;
+        }
     }
 
     public ResolvedTypeDeclaration declaringType() {

@@ -43,7 +43,9 @@ public class SourceModelTest {
 
         currentModel.addAggregate(new Aggregate.Builder()
                 .name("Aggregate1")
-                .packageName(packageName)
+                .className(new SafeClassName.Builder()
+                        .rootClassName(new ClassName(CURRENT_PACKAGE, "Aggregate1Root"))
+                        .build())
                 .ensureDefaultLocations()
                 .build());
 
@@ -104,7 +106,7 @@ public class SourceModelTest {
             assertTrue(newModel.event(event.simpleName()).isPresent());
         }
         for(Aggregate aggregate : fixedModel.aggregates()) {
-            assertTrue(newModel.aggregate(aggregate.simpleName()).isPresent());
+            assertTrue(newModel.aggregate(aggregate.name()).isPresent());
         }
         for(MessageListener listener : fixedModel.messageListeners()) {
             assertTrue(newModel.messageListeners().contains(listener));

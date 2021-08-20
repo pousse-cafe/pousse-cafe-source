@@ -42,8 +42,8 @@ public class AggregateRootClass {
 
     public Optional<ClassName> identifierClassName() {
         return resolvedTypeDeclaration.superclassType()
-                .filter(type -> type.isParametrized())
-                .filter(type -> type.typeParameters().size() > 0)
+                .filter(ResolvedType::isParametrized)
+                .filter(type -> !type.typeParameters().isEmpty())
                 .map(type -> type.typeParameters().get(0).toTypeName().qualifiedClassName());
     }
 }

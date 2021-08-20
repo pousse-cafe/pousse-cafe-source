@@ -25,8 +25,8 @@ import poussecafe.source.model.DomainEvent;
 import poussecafe.source.model.Message;
 import poussecafe.source.model.MessageListener;
 import poussecafe.source.model.MessageType;
-import poussecafe.source.model.SourceModel;
 import poussecafe.source.model.ProducedEvent;
+import poussecafe.source.model.SourceModel;
 
 import static java.util.stream.Collectors.toList;
 
@@ -97,7 +97,7 @@ public abstract class AggregateMessageListenerEditor {
 
         setListenerRunner(messageListenerAnnotationEditor);
 
-        if(messageListener.consumesFromExternal().isPresent()) {
+        if(!messageListener.consumesFromExternal().isEmpty()) {
             messageListenerAnnotationEditor.setAttribute("consumesFromExternal", consumesFromExternalAttributeValue());
         } else {
             messageListenerAnnotationEditor.removeAttribute("consumesFromExternal");
@@ -216,11 +216,13 @@ public abstract class AggregateMessageListenerEditor {
     }
 
     private Expression consumesFromExternalAttributeValue() {
-        Optional<String> consumesFromExternal = messageListener.consumesFromExternal();
+        List<String> consumesFromExternal = messageListener.consumesFromExternal();
         if(consumesFromExternal.isEmpty()) {
             return ast.ast().newNullLiteral();
+        } else if(consumesFromExternal.size() == 1) {
+            return ast.newStringLiteral(consumesFromExternal.get(0));
         } else {
-            return ast.newStringLiteral(consumesFromExternal.get());
+            return ast.newStringArrayInitializer(consumesFromExternal);
         }
     }
 

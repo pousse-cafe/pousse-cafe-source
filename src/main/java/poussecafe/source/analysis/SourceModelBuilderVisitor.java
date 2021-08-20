@@ -9,6 +9,7 @@ import poussecafe.source.WithPersistableState;
 import poussecafe.source.model.AggregateContainer;
 import poussecafe.source.model.Command;
 import poussecafe.source.model.DomainEvent;
+import poussecafe.source.model.InnerAggregateRoot;
 import poussecafe.source.model.Message;
 import poussecafe.source.model.MessageListener;
 import poussecafe.source.model.MessageListenerContainer;
@@ -68,6 +69,9 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
         } else if(ValueObjectClass.isValueObject(resolvedTypeDeclaration)) {
             visitValueObject(resolvedTypeDeclaration);
             return false;
+        } else if(ServiceClass.isService(resolvedTypeDeclaration)) {
+            visitService(resolvedTypeDeclaration);
+            return false;
         } else if(MessageDefinitionType.isMessageDefinition(resolvedTypeDeclaration)) {
             visitMessageDefinition(resolvedTypeDeclaration);
             return false;
@@ -88,6 +92,7 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
         } else {
             aggregateName = aggregateNameForInnerClass(resolvedTypeDeclaration);
             identifier = innerClassQualifiedName(resolvedTypeDeclaration);
+            createInnerAggregateRoot(aggregateName, aggregateRootClass);
         }
         container = new MessageListenerContainer.Builder()
                 .type(typeLevel == 0 ? MessageListenerContainerType.STANDALONE_ROOT : MessageListenerContainerType.INNER_ROOT)
@@ -111,6 +116,15 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
                 .documentation(resolvedTypeDeclaration.documentation())
                 .references(referencesDiscovery.references())
                 .build();
+    }
+
+    private void createInnerAggregateRoot(String aggregateName, AggregateRootClass aggregateRootClass) {
+        var referencesDiscovery = new TypeReferencesDiscovery(aggregateRootClass.typeDeclaration());
+        modelBuilder.addInnerAggregateRoot(aggregateName, new InnerAggregateRoot.Builder()
+                .name(aggregateRootClass.typeDeclaration().unresolvedName())
+                .references(referencesDiscovery.references())
+                .identifierClassName(aggregateRootClass.identifierClassName())
+                .build());
     }
 
     private void visitProcessDefinition(ResolvedTypeDeclaration resolvedTypeDeclaration) {
@@ -197,8 +211,7 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
         var containerClass = new AggregateContainerClass(resolvedTypeDeclaration);
         modelBuilder.addAggregateContainer(new AggregateContainer.Builder()
                 .typeComponent(typeComponent(resolvedTypeDeclaration))
-                .identifierClassName(containerClass.identifierClassName())
-                .build());
+                .identifierClassName(containerClass.identifierClassName()));
     }
 
     private void visitModule(ResolvedTypeDeclaration resolvedTypeDeclaration) {
@@ -211,6 +224,10 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
 
     private void visitValueObject(ResolvedTypeDeclaration resolvedTypeDeclaration) {
         modelBuilder.addValueObject(typeComponent(resolvedTypeDeclaration));
+    }
+
+    private void visitService(ResolvedTypeDeclaration resolvedTypeDeclaration) {
+        modelBuilder.addService(typeComponent(resolvedTypeDeclaration));
     }
 
     private void visitMessageDefinition(ResolvedTypeDeclaration resolvedTypeDeclaration) {
@@ -235,9 +252,7 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
 
     @Override
     public void endVisit(ResolvedTypeDeclaration node) {
-        if(typeLevel == containerLevel) {
-            container = null;
-        } else if(typeLevel == 0) {
+        if(typeLevel == containerLevel || typeLevel == 0) {
             container = null;
         }
         --typeLevel;

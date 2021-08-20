@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
@@ -14,7 +15,7 @@ import static java.util.stream.Collectors.toList;
 public class SourceModel {
 
     void addAggregate(Aggregate source) {
-        aggregates.put(source.simpleName(), source);
+        aggregates.put(source.name(), source);
     }
 
     private Map<String, Aggregate> aggregates = new HashMap<>();
@@ -147,6 +148,22 @@ public class SourceModel {
         return Collections.unmodifiableList(valueObjects);
     }
 
+    public Stream<Aggregate> moduleAggregates(TypeComponent module) {
+        var modulePackage = module.typeName().asName().qualifier();
+        return aggregates.values().stream()
+                .filter(aggregate -> aggregate.packageName().startsWith(modulePackage));
+    }
+
+    void addService(TypeComponent service) {
+        services.add(service);
+    }
+
+    private List<TypeComponent> services = new ArrayList<>();
+
+    public Collection<TypeComponent> services() {
+        return Collections.unmodifiableCollection(services);
+    }
+
     /**
      * Fixing package names implies the copy of all components of a given model but keeping
      * the package names as defined in this model. Only the components from given model are kept in the
@@ -194,11 +211,11 @@ public class SourceModel {
     }
 
     private Aggregate fixAggregate(Aggregate aggregate) {
-        var thisAggregate = aggregates.get(aggregate.simpleName());
+        var thisAggregate = aggregates.get(aggregate.name());
         if(thisAggregate != null) {
             return new Aggregate.Builder()
                     .startingFrom(aggregate)
-                    .packageName(thisAggregate.packageName())
+                    .className(aggregate.className().moveToPackage(thisAggregate.packageName()))
                     .build();
         } else {
             return aggregate;

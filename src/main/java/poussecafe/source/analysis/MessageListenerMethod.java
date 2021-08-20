@@ -57,8 +57,8 @@ public class MessageListenerMethod implements Documented {
         return messageListenerAnnotation().attribute("runner").map(ResolvedExpression::asType);
     }
 
-    public Optional<String> consumesFromExternal() {
-        return messageListenerAnnotation().attribute("consumesFromExternal").map(ResolvedExpression::asString);
+    public List<String> consumesFromExternal() {
+        return messageListenerAnnotation().attribute("consumesFromExternal").map(ResolvedExpression::asStrings).orElse(emptyList());
     }
 
     public Optional<ResolvedType> returnType() {

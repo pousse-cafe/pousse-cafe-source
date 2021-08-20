@@ -38,7 +38,7 @@ public class CoreCodeGenerator extends AbstractCodeGenerator {
         }
 
         for(Aggregate aggregate : fixedModel.aggregates()) {
-            if(currentModel.aggregate(aggregate.simpleName()).isEmpty()) {
+            if(currentModel.aggregate(aggregate.name()).isEmpty()) {
                 generate(aggregate);
             }
         }

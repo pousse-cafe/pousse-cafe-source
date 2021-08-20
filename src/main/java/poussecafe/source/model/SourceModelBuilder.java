@@ -41,11 +41,16 @@ public class SourceModelBuilder implements Serializable {
 
     private Map<String, StandaloneAggregateRepository> standaloneAggregateRepositories = new HashMap<>();
 
-    public void addAggregateContainer(AggregateContainer container) {
-        aggregateContainers.put(container.aggregateName(), container);
+    public void addAggregateContainer(AggregateContainer.Builder container) {
+        aggregateContainers.put(container.aggregateName().orElseThrow(), container);
     }
 
-    private Map<String, AggregateContainer> aggregateContainers = new HashMap<>();
+    private Map<String, AggregateContainer.Builder> aggregateContainers = new HashMap<>();
+
+    public void addInnerAggregateRoot(String aggregateName, InnerAggregateRoot innerRoot) {
+        var container = aggregateContainers.get(aggregateName);
+        container.innerRoot(innerRoot);
+    }
 
     public void addProcess(ProcessModel process) {
         String name = process.simpleName();
@@ -162,6 +167,12 @@ public class SourceModelBuilder implements Serializable {
 
     private List<TypeComponent> valueObjects = new ArrayList<>();
 
+    public void addService(TypeComponent typeComponent) {
+        services.add(typeComponent);
+    }
+
+    private List<TypeComponent> services = new ArrayList<>();
+
     public void forget(String sourceId) {
         forget(sourceId, standaloneAggregateFactories.values());
         forget(sourceId, standaloneAggregateRoots.values());
@@ -175,6 +186,7 @@ public class SourceModelBuilder implements Serializable {
         forgetTypeComponents(sourceId, modules);
         forgetTypeComponents(sourceId, entities);
         forgetTypeComponents(sourceId, valueObjects);
+        forgetTypeComponents(sourceId, services);
     }
 
     private <T extends WithTypeComponent> void forget(
@@ -197,6 +209,7 @@ public class SourceModelBuilder implements Serializable {
         processes.values().forEach(model::addProcess);
         commands.values().forEach(model::addCommand);
         events.values().forEach(model::addEvent);
+        services.forEach(model::addService);
         buildModelAggregates(model);
         listeners.forEach(model::addMessageListener);
         runners.values().forEach(model::addRunner);
@@ -227,50 +240,55 @@ public class SourceModelBuilder implements Serializable {
             builder.ensureDefaultLocations();
         }
 
-        aggregates.values().stream().map(Aggregate.Builder::build).forEach(model::addAggregate);
+        aggregates.values().stream()
+            .filter(Aggregate.Builder::isValid)
+            .map(Aggregate.Builder::build)
+            .forEach(model::addAggregate);
     }
 
     private void initAggregateBuilders() {
         aggregates.entrySet().removeIf(entry -> !entry.getValue().provided());
 
         for(StandaloneAggregateFactory factory : standaloneAggregateFactories.values()) {
-            var aggregate = aggregates.computeIfAbsent(factory.aggregateName(),
-                    name -> newBuilder(name, factory.typeComponent().typeName().rootClassName().qualifier()));
+            var aggregate = aggregates.computeIfAbsent(factory.aggregateName(), this::newBuilder);
             aggregate.innerFactory(false);
             aggregate.standaloneFactorySource(Optional.of(factory.typeComponent().source()));
         }
 
         for(StandaloneAggregateRoot root : standaloneAggregateRoots.values()) {
-            var aggregate = aggregates.computeIfAbsent(root.aggregateName(),
-                    name -> newBuilder(name, root.typeComponent().typeName().rootClassName().qualifier()));
+            var aggregate = aggregates.computeIfAbsent(root.aggregateName(), this::newBuilder);
             aggregate.innerRoot(false);
             aggregate.standaloneRootSource(Optional.of(root.typeComponent().source()));
             aggregate.documentation(root.typeComponent().documentation());
-            aggregate.identifierClassName(root.identifierClassName());
+            aggregate.rootIdentifierClassName(root.identifierClassName());
+            aggregate.rootReferences(root.typeComponent().references());
+            aggregate.className(root.typeComponent().typeName());
         }
 
         for(StandaloneAggregateRepository repository : standaloneAggregateRepositories.values()) {
-            var aggregate = aggregates.computeIfAbsent(repository.aggregateName(),
-                    name -> newBuilder(name, repository.typeComponent().typeName().rootClassName().qualifier()));
+            var aggregate = aggregates.computeIfAbsent(repository.aggregateName(), this::newBuilder);
             aggregate.standaloneRepositorySource(Optional.of(repository.typeComponent().source()));
             aggregate.innerRepository(false);
         }
 
-        for(AggregateContainer container : aggregateContainers.values()) {
-            var aggregate = aggregates.computeIfAbsent(container.aggregateName(),
-                    name -> newBuilder(name, container.typeComponent().typeName().rootClassName().qualifier()));
+        for(AggregateContainer.Builder containerBuilder : aggregateContainers.values()) {
+            var container = containerBuilder.build();
+            var aggregate = aggregates.computeIfAbsent(container.aggregateName(), this::newBuilder);
             aggregate.containerSource(Optional.of(container.typeComponent().source()));
             aggregate.documentation(container.typeComponent().documentation());
-            if(container.identifierClassName().isPresent()) {
-                aggregate.identifierClassName(container.identifierClassName());
+            if(container.innerRoot().isPresent()) {
+                aggregate.rootIdentifierClassName(container.identifierClassName());
+
+                var innerRoot = container.innerRoot().orElseThrow();
+                aggregate.rootReferences(innerRoot.references());
+                aggregate.className(innerRoot.typeName());
             }
         }
     }
 
-    private Aggregate.Builder newBuilder(String name, String packageName) {
+    private Aggregate.Builder newBuilder(String name) {
         var aggregateBuilder = new Aggregate.Builder();
         aggregateBuilder.name(name);
-        aggregateBuilder.packageName(packageName);
         return aggregateBuilder;
     }
 }

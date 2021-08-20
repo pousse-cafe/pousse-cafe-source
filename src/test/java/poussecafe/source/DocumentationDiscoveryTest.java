@@ -7,6 +7,7 @@ import poussecafe.source.analysis.ClassName;
 import poussecafe.source.model.Documentation;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DocumentationDiscoveryTest extends DiscoveryTest {
@@ -41,20 +42,22 @@ public class DocumentationDiscoveryTest extends DiscoveryTest {
         var model = model();
 
         var aggregate1 = model.aggregates().stream()
-                .filter(item -> item.simpleName().equals("Aggregate1"))
+                .filter(item -> item.name().equals("Aggregate1"))
                 .findFirst().orElseThrow();
         assertThat(aggregate1.documentation(), equalTo(new Documentation.Builder()
                 .description("Aggregate1 documentation.")
                 .shortDescription("Aggregate1 short")
                 .build()));
         ClassName identifierClassName = new ClassName(basePackage() + ".model.aggregate1.Identifier1");
-        assertThat(aggregate1.identifierClassName(), equalTo(Optional.of(identifierClassName)));
+        assertThat(aggregate1.rootIdentifierClassName(), equalTo(Optional.of(identifierClassName)));
+        assertThat(aggregate1.rootReferences().size(), is(3));
 
         var aggregate2 = model.aggregates().stream()
-                .filter(item -> item.simpleName().equals("Aggregate2"))
+                .filter(item -> item.name().equals("Aggregate2"))
                 .findFirst().orElseThrow();
         ClassName identifier2ClassName = new ClassName(basePackage() + ".model.aggregate2.Identifier2");
-        assertThat(aggregate2.identifierClassName(), equalTo(Optional.of(identifier2ClassName)));
+        assertThat(aggregate2.rootIdentifierClassName(), equalTo(Optional.of(identifier2ClassName)));
+        assertThat(aggregate2.rootReferences().size(), is(1));
     }
 
     @Test

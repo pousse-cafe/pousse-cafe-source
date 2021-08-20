@@ -1,10 +1,17 @@
 package poussecafe.source.model;
 
+import java.io.Serializable;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import poussecafe.source.analysis.ClassName;
 
 import static java.util.Objects.requireNonNull;
+import static poussecafe.util.Equality.referenceEquals;
 
-public class TypeReference {
+@SuppressWarnings("serial")
+public class TypeReference implements Serializable {
 
     private ClassName typeClassName;
 
@@ -51,5 +58,32 @@ public class TypeReference {
 
     private TypeReference() {
 
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append(typeClassName)
+                .append(ignored)
+                .append(type)
+                .build();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return referenceEquals(this, obj).orElse(other -> new EqualsBuilder()
+                .append(typeClassName, other.typeClassName)
+                .append(ignored, other.ignored)
+                .append(type, other.type)
+                .build());
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(typeClassName)
+                .append(ignored)
+                .append(type)
+                .build();
     }
 }

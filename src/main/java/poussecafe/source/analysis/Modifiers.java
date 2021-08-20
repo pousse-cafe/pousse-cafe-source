@@ -70,15 +70,21 @@ public class Modifiers {
     }
 
     public boolean hasVisibility(Visibility visibility) {
-        if(visibility == Visibility.PACKAGE) {
-            return actualModifiers().stream()
-                    .noneMatch(Modifiers::isVisibilityKeyword);
+        if(target == ModifiersTarget.INTERFACE_METHOD && modifiersList.isEmpty()) {
+            return visibility == Visibility.PUBLIC;
         } else {
-            var keyword = keyword(visibility);
-            return actualModifiers().stream()
-                    .anyMatch(modifier -> modifier.getKeyword().equals(keyword));
+            if(visibility == Visibility.PACKAGE) {
+                return actualModifiers().stream()
+                        .noneMatch(Modifiers::isVisibilityKeyword);
+            } else {
+                var keyword = keyword(visibility);
+                return actualModifiers().stream()
+                        .anyMatch(modifier -> modifier.getKeyword().equals(keyword));
+            }
         }
     }
+
+    private ModifiersTarget target = ModifiersTarget.OTHER;
 
     public static boolean isVisibilityKeyword(Modifier modifier) {
         return VISIBILITY_KEYWORDS.contains(modifier.getKeyword());
@@ -132,6 +138,7 @@ public class Modifiers {
 
         public Modifiers build() {
             requireNonNull(modifiers.modifiersList);
+            requireNonNull(modifiers.target);
             return modifiers;
         }
 
@@ -144,6 +151,11 @@ public class Modifiers {
 
         public Builder resolver(Resolver resolver) {
             modifiers.resolver = resolver;
+            return this;
+        }
+
+        public Builder target(ModifiersTarget target) {
+            modifiers.target = target;
             return this;
         }
     }

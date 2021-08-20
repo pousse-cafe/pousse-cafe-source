@@ -30,7 +30,13 @@ public class AggregateContainer implements Serializable, WithTypeComponent {
 
     private ClassName identifierClassName;
 
-    public static class Builder {
+    public Optional<InnerAggregateRoot> innerRoot() {
+        return Optional.ofNullable(innerRoot);
+    }
+
+    private InnerAggregateRoot innerRoot;
+
+    public static class Builder implements WithTypeComponent, Serializable {
 
         private AggregateContainer aggregate = new AggregateContainer();
 
@@ -44,9 +50,27 @@ public class AggregateContainer implements Serializable, WithTypeComponent {
             return this;
         }
 
+        public Optional<String> aggregateName() {
+            if(aggregate.typeComponent == null) {
+                return Optional.empty();
+            } else {
+                return Optional.of(aggregate.aggregateName());
+            }
+        }
+
         public Builder identifierClassName(Optional<ClassName> identifierClassName) {
             aggregate.identifierClassName = identifierClassName.orElse(null);
             return this;
+        }
+
+        public Builder innerRoot(InnerAggregateRoot innerRoot) {
+            aggregate.innerRoot = innerRoot;
+            return this;
+        }
+
+        @Override
+        public TypeComponent typeComponent() {
+            return aggregate.typeComponent();
         }
     }
 
@@ -58,6 +82,8 @@ public class AggregateContainer implements Serializable, WithTypeComponent {
     public boolean equals(Object obj) {
         return referenceEquals(this, obj).orElse(other -> new EqualsBuilder()
                 .append(typeComponent, other.typeComponent)
+                .append(identifierClassName, other.identifierClassName)
+                .append(innerRoot, other.innerRoot)
                 .build());
     }
 
@@ -65,6 +91,8 @@ public class AggregateContainer implements Serializable, WithTypeComponent {
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(typeComponent)
+                .append(identifierClassName)
+                .append(innerRoot)
                 .build();
     }
 }

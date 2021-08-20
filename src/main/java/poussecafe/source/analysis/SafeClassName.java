@@ -134,4 +134,11 @@ public class SafeClassName implements Serializable {
                 .innerClassPath(innerClassPath)
                 .build();
     }
+
+    public SafeClassName moveToPackage(String packageName) {
+        return new SafeClassName.Builder()
+                .rootClassName(rootClassName.withQualifier(packageName))
+                .innerClassPath(innerClassPath)
+                .build();
+    }
 }

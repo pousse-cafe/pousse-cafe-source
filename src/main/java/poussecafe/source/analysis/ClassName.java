@@ -77,6 +77,10 @@ public class ClassName implements Serializable {
         return qualified;
     }
 
+    public ClassName withQualifier(String packageName) {
+        return new ClassName(packageName, identifier);
+    }
+
     public ClassName(org.eclipse.jdt.core.dom.Name jdomName) {
         this(jdomName.getFullyQualifiedName());
     }

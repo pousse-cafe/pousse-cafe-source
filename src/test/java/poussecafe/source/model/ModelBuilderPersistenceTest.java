@@ -12,6 +12,7 @@ import poussecafe.source.PathSource;
 import poussecafe.source.analysis.ClassName;
 import poussecafe.source.analysis.SafeClassName;
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -58,7 +59,7 @@ public class ModelBuilderPersistenceTest {
                         .containerIdentifier("Aggregate.Root")
                         .type(MessageListenerContainerType.INNER_ROOT)
                         .build())
-                .withConsumesFromExternal(Optional.of("ExternalSource"))
+                .withConsumesFromExternal(singletonList("ExternalSource"))
                 .withMethodName("listener")
                 .withProcessName("Process")
                 .withRunnerClass(Optional.of("package.Runner"))
@@ -72,13 +73,19 @@ public class ModelBuilderPersistenceTest {
                 .build();
         builder.addRunner(runner);
 
-        expectedAggregateContainer = new AggregateContainer.Builder()
+        var containerBuilder = new AggregateContainer.Builder()
                 .typeComponent(new TypeComponent.Builder()
                         .name(SafeClassName.ofRootClass(new ClassName("package.Aggregate")))
                         .source(new PathSource(Path.of("package/Aggregate.java")))
                         .build())
-                .build();
-        builder.addAggregateContainer(expectedAggregateContainer);
+                .innerRoot(new InnerAggregateRoot.Builder()
+                        .name(new SafeClassName.Builder()
+                                .rootClassName(new ClassName("package", "Aggregate"))
+                                .appendPathElement("Root")
+                                .build())
+                        .build());
+        expectedAggregateContainer = containerBuilder.build();
+        builder.addAggregateContainer(containerBuilder);
 
         standaloneAggregateFactory = new StandaloneAggregateFactory.Builder()
                 .typeComponent(new TypeComponent.Builder()
@@ -110,9 +117,14 @@ public class ModelBuilderPersistenceTest {
         providedAggregate.innerRoot(true);
         providedAggregate.innerRepository(true);
         providedAggregate.name("ProvidedAggregate");
-        providedAggregate.packageName("package");
+        providedAggregate.className(new SafeClassName.Builder()
+                .rootClassName(new ClassName("package", "ProvidedAggregate"))
+                .innerClassPath(singletonList("Root"))
+                .build());
         providedAggregate.provided(true);
         builder.putAggregate(providedAggregate);
+
+        builder.build();
     }
 
     private SourceModelBuilder builder;

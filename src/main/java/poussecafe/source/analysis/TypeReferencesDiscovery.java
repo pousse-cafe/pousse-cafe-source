@@ -87,14 +87,14 @@ public class TypeReferencesDiscovery {
 
     private ClassName typeClassName(ResolvedType typeName) {
         if(typeName.isSimpleType()) {
-            return typeName.toTypeName().name();
+            return typeName.toTypeName().qualifiedClassName();
         } else if(typeName.isParametrized()) {
             var typeParameters = typeName.typeParameters();
             if(typeParameters.size() == 1) {
-                return typeParameters.get(0).toTypeName().name();
+                return typeParameters.get(0).toTypeName().qualifiedClassName();
             } else if(typeParameters.size() == 2
                     && typeName.genericTypeName().instanceOf(CompilationUnitResolver.ENTITY_MAP_ATTRIBUTE_INTERFACE)) {
-                return typeParameters.get(1).toTypeName().name();
+                return typeParameters.get(1).toTypeName().qualifiedClassName();
             } else {
                 throw new UnsupportedOperationException();
             }

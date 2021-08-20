@@ -71,8 +71,12 @@ public class EmilExporter {
 
     private void appendTopListener(MessageListener rootListener) {
         builder.resetIndent();
-        Optional<String> consumesFromExternal = rootListener.consumesFromExternal();
-        appendMessageConsumption(consumesFromExternal, rootListener.consumedMessage(), true, Optional.empty());
+        if(rootListener.consumesFromExternal().isEmpty()) {
+            appendMessageConsumption(Optional.empty(), rootListener.consumedMessage(), true, Optional.empty());
+        } else {
+            rootListener.consumesFromExternal().forEach(consumesFromExternal ->
+                appendMessageConsumption(Optional.of(consumesFromExternal), rootListener.consumedMessage(), true, Optional.empty()));
+        }
     }
 
     private void appendMessageConsumption(Optional<String> consumesFromExternal, Message message, boolean required, Optional<String> noteIfNoListeners) {

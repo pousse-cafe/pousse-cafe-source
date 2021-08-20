@@ -8,25 +8,25 @@ import poussecafe.source.model.DomainEvent;
 public class NamingConventions {
 
     public static ClassName aggregateIdentifierTypeName(Aggregate aggregate) {
-        return new ClassName(aggregate.packageName(), aggregate.simpleName() + "Id");
+        return new ClassName(aggregate.packageName(), aggregate.name() + "Id");
     }
 
     public static ClassName aggregateContainerTypeName(Aggregate aggregate) {
-        return new ClassName(aggregate.packageName(), aggregate.simpleName());
+        return new ClassName(aggregate.packageName(), aggregate.name());
     }
 
     public static ClassName aggregateRootTypeName(Aggregate aggregate) {
         if(aggregate.innerRoot()) {
             return new ClassName(aggregateContainerTypeName(aggregate).toString(), ROOT_SUFFIX);
         } else {
-            return new ClassName(aggregate.packageName(), aggregate.simpleName() + ROOT_SUFFIX);
+            return new ClassName(aggregate.packageName(), aggregate.name() + ROOT_SUFFIX);
         }
     }
 
     private static final String ROOT_SUFFIX = "Root";
 
     public static ClassName aggregateFactoryTypeName(Aggregate aggregate) {
-        return new ClassName(aggregate.packageName(), aggregate.simpleName() + FACTORY_NAME_SUFFIX);
+        return new ClassName(aggregate.packageName(), aggregate.name() + FACTORY_NAME_SUFFIX);
     }
 
     private static final String FACTORY_NAME_SUFFIX = "Factory";
@@ -54,7 +54,7 @@ public class NamingConventions {
     }
 
     public static ClassName aggregateRepositoryTypeName(Aggregate aggregate) {
-        return new ClassName(aggregate.packageName(), aggregate.simpleName() + REPOSITORY_NAME_SUFFIX);
+        return new ClassName(aggregate.packageName(), aggregate.name() + REPOSITORY_NAME_SUFFIX);
     }
 
     private static final String REPOSITORY_NAME_SUFFIX = "Repository";

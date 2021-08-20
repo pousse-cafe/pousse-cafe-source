@@ -32,6 +32,7 @@ import poussecafe.domain.EntityDataAccess;
 import poussecafe.domain.Factory;
 import poussecafe.domain.Module;
 import poussecafe.domain.Repository;
+import poussecafe.domain.Service;
 import poussecafe.domain.ValueObject;
 import poussecafe.environment.AggregateMessageListenerRunner;
 import poussecafe.messaging.Message;
@@ -359,6 +360,8 @@ public class CompilationUnitResolver implements Resolver {
     public static final String VALUE_OBJECT_INTERFACE = ValueObject.class.getCanonicalName();
 
     public static final String ENTITY_MAP_ATTRIBUTE_INTERFACE = EntityMapAttribute.class.getCanonicalName();
+
+    public static final String SERVICE_INTERFACE = Service.class.getCanonicalName();
 
     public static class Builder {
 

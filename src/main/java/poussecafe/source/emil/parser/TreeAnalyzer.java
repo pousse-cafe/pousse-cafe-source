@@ -2,6 +2,7 @@ package poussecafe.source.emil.parser;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import poussecafe.source.model.AggregateContainer;
 import poussecafe.source.model.Cardinality;
 import poussecafe.source.model.Command;
 import poussecafe.source.model.DomainEvent;
+import poussecafe.source.model.InnerAggregateRoot;
 import poussecafe.source.model.Message;
 import poussecafe.source.model.MessageListener;
 import poussecafe.source.model.MessageListenerContainer;
@@ -47,6 +49,7 @@ import poussecafe.source.model.StandaloneAggregateRepository;
 import poussecafe.source.model.StandaloneAggregateRoot;
 import poussecafe.source.model.TypeComponent;
 
+import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 
 public class TreeAnalyzer {
@@ -88,7 +91,14 @@ public class TreeAnalyzer {
         }
 
         for(Entry<String, AggregateContainer.Builder> root : aggregateContainers.entrySet()) {
-            model.addAggregateContainer(root.getValue().build());
+            if(!standaloneAggregateRoots.containsKey(root.getKey())) {
+                var innerRootClassName = root.getValue().typeComponent().typeName().withLastSegment("Root");
+                root.getValue().innerRoot(new InnerAggregateRoot.Builder()
+                        .identifierClassName(Optional.empty())
+                        .name(innerRootClassName)
+                        .build());
+            }
+            model.addAggregateContainer(root.getValue());
         }
 
         return model.build();
@@ -103,10 +113,10 @@ public class TreeAnalyzer {
                 .packageName(typeName.rootClassName().qualifier())
                 .source(source(typeName))
                 .build());
-        analyzeMessageConsumptions(Optional.empty(), Message.command(commandName), context.messageConsumptions());
+        analyzeMessageConsumptions(emptyList(), Message.command(commandName), context.messageConsumptions());
     }
 
-    private void analyzeMessageConsumptions(Optional<String> consumesFromExternal,
+    private void analyzeMessageConsumptions(List<String> consumesFromExternal,
             Message consumedMessage,
             MessageConsumptionsContext messageConsumptions) {
         if(messageConsumptions.singleMessageConsumption() != null) {
@@ -120,7 +130,7 @@ public class TreeAnalyzer {
         }
     }
 
-    private void analyzeSingleMessageConsumption(Optional<String> consumesFromExternal,
+    private void analyzeSingleMessageConsumption(List<String> consumesFromExternal,
             Message consumedMessage,
             SingleMessageConsumptionContext singleMessageConsumption) {
         if(singleMessageConsumption.factoryConsumption() != null) {
@@ -141,7 +151,7 @@ public class TreeAnalyzer {
         }
     }
 
-    private void analyzeFactoryConsumption(Optional<String> consumesFromExternal,
+    private void analyzeFactoryConsumption(List<String> consumesFromExternal,
             Message consumedMessage,
             FactoryConsumptionContext factoryConsumption) {
         var factoryListener = factoryConsumption.factoryListener();
@@ -290,7 +300,7 @@ public class TreeAnalyzer {
     private void analyzeEventProduction(EventProductionContext eventProduction) {
         var message = Message.domainEvent(eventProduction.event().NAME().getText());
         model.addEventIfAbsent(event(message.name()));
-        analyzeMessageConsumptions(Optional.empty(), message, eventProduction.messageConsumptions());
+        analyzeMessageConsumptions(emptyList(), message, eventProduction.messageConsumptions());
     }
 
     private DomainEvent event(String name) {
@@ -303,7 +313,7 @@ public class TreeAnalyzer {
                 .build();
     }
 
-    private void analyzeAggregateRootConsumption(Optional<String> consumesFromExternal,
+    private void analyzeAggregateRootConsumption(List<String> consumesFromExternal,
             Message consumedMessage,
             AggregateRootConsumptionContext aggregateRootConsumption) {
         var simpleName = aggregateRootConsumption.aggregateRoot().simpleRootName;
@@ -369,7 +379,7 @@ public class TreeAnalyzer {
 
     private Map<String, StandaloneAggregateRoot.Builder> standaloneAggregateRoots = new HashMap<>();
 
-    private void analyzeRepositoryConsumption(Optional<String> consumesFromExternal,
+    private void analyzeRepositoryConsumption(List<String> consumesFromExternal,
             Message consumedMessage,
             RepositoryConsumptionContext repositoryConsumption) {
 
@@ -442,7 +452,7 @@ public class TreeAnalyzer {
                 .build());
     }
 
-    private void analyzeMultipleMessageConsumptions(Optional<String> consumesFromExternal,
+    private void analyzeMultipleMessageConsumptions(List<String> consumesFromExternal,
             Message consumedMessage,
             MultipleMessageConsumptionsContext multipleMessageConsumptions) {
         for(MultipleMessageConsumptionsItemContext item : multipleMessageConsumptions.multipleMessageConsumptionsItem()) {
@@ -453,9 +463,11 @@ public class TreeAnalyzer {
     private void analyzeEventConsumption(EventConsumptionContext context) {
         var eventName = context.event().NAME().getText();
         model.addEventIfAbsent(event(eventName));
-        Optional<String> consumesFromExternal = Optional.ofNullable(context.external())
+        List<String> consumesFromExternal = Optional.ofNullable(context.external())
                 .map(ExternalContext::NAME)
-                .map(TerminalNode::getText);
+                .map(TerminalNode::getText)
+                .map(Collections::singletonList)
+                .orElse(emptyList());
         analyzeMessageConsumptions(consumesFromExternal, Message.domainEvent(eventName), context.messageConsumptions());
     }
 
