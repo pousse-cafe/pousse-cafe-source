@@ -21,4 +21,8 @@ public interface ResolvedCompilationUnitVisitor {
     default void forget(String sourceId) {
 
     }
+
+    default boolean visit(ResolvedEnumDeclaration resolvedEnumDeclaration) {
+        return false;
+    }
 }

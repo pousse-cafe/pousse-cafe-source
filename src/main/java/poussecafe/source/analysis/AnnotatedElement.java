@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
@@ -62,6 +63,9 @@ public class AnnotatedElement<T> {
             } else if(element instanceof TypeDeclaration) {
                 TypeDeclaration declaration = (TypeDeclaration) element;
                 withModifiers(declaration.modifiers());
+            } else if(element instanceof EnumDeclaration) {
+                EnumDeclaration declaration = (EnumDeclaration) element;
+                withModifiers(declaration.modifiers());
             } else {
                 throw new IllegalArgumentException("Unsupported annotated element type " + element.getClass().getSimpleName());
             }
@@ -70,7 +74,7 @@ public class AnnotatedElement<T> {
 
         private void withModifiers(@SuppressWarnings("rawtypes") List modifiers) {
             modifiers.stream()
-                    .filter(item -> item instanceof Annotation)
+                    .filter(Annotation.class::isInstance)
                     .forEach(annotationObject -> annotations.add((Annotation) annotationObject));
         }
 

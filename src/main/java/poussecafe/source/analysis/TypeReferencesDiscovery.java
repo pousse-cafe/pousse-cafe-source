@@ -76,7 +76,8 @@ public class TypeReferencesDiscovery {
     }
 
     private Optional<ComponentType> componentType(ResolvedTypeName typeName) {
-        if(typeName.instanceOf(CompilationUnitResolver.VALUE_OBJECT_INTERFACE)) {
+        if(typeName.instanceOf(CompilationUnitResolver.VALUE_OBJECT_INTERFACE)
+                || typeName.instanceOf(Enum.class.getCanonicalName())) {
             return Optional.of(ComponentType.VALUE_OBJECT);
         } else if(typeName.instanceOf(CompilationUnitResolver.ENTITY_CLASS)) {
             return Optional.of(ComponentType.ENTITY);

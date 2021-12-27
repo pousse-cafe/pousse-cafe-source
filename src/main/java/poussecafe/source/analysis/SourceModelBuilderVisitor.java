@@ -258,6 +258,24 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
         --typeLevel;
     }
 
+    @Override
+    public boolean visit(ResolvedEnumDeclaration resolvedEnumDeclaration) {
+        visitValueObject(resolvedEnumDeclaration);
+        return false;
+    }
+
+    private void visitValueObject(ResolvedEnumDeclaration resolvedEnumDeclaration) {
+        modelBuilder.addValueObject(typeComponent(resolvedEnumDeclaration));
+    }
+
+    private TypeComponent typeComponent(ResolvedEnumDeclaration resolvedEnumDeclaration) {
+        return new TypeComponent.Builder()
+                .source(compilationUnit.sourceFile())
+                .name(resolvedEnumDeclaration.unresolvedName())
+                .documentation(resolvedEnumDeclaration.documentation())
+                .build();
+    }
+
     private SourceModelBuilder modelBuilder = new SourceModelBuilder();
 
     private void visitRunner(ResolvedTypeDeclaration resolvedTypeDeclaration) {

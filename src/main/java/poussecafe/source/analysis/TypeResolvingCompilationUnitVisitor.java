@@ -127,7 +127,21 @@ public class TypeResolvingCompilationUnitVisitor {
 
         @Override
         public boolean visit(EnumDeclaration node) {
-            return false;
+            var resolvedEnumDeclaration = new ResolvedEnumDeclaration.Builder()
+                    .withDeclaration(node)
+                    .withResolver(resolver)
+                    .build();
+            boolean mustVisitChildren = false;
+            for(ResolvedCompilationUnitVisitor visitor : visitors) {
+                try {
+                    if(visitor.visit(resolvedEnumDeclaration)) {
+                        mustVisitChildren = true;
+                    }
+                } catch (Exception e) {
+                    errors.add(e);
+                }
+            }
+            return mustVisitChildren;
         }
 
         @Override
