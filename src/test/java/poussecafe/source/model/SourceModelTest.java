@@ -55,6 +55,7 @@ public class SourceModelTest {
                         .type(MessageListenerContainerType.STANDALONE_ROOT)
                         .aggregateName("Aggregate1")
                         .containerIdentifier("Aggregate1Factory")
+                        .containerClass(containerTypeName.asName())
                         .build())
                 .withMethodName("method")
                 .withConsumedMessage(new Message.Builder()

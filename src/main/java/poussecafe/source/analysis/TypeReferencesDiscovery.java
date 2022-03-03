@@ -1,18 +1,18 @@
 package poussecafe.source.analysis;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import poussecafe.source.Ignore;
 import poussecafe.source.model.ComponentType;
 import poussecafe.source.model.TypeReference;
 
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
+import static java.util.Collections.emptySet;
+import static java.util.stream.Collectors.toSet;
 
 public class TypeReferencesDiscovery {
 
-    public List<TypeReference> references() {
+    public Set<TypeReference> references() {
         if(ValueObjectClass.isValueObject(resolvedTypeDeclaration)) {
             return methodReturnTypeReferences(resolvedTypeDeclaration);
         } else if(EntityClass.isEntity(resolvedTypeDeclaration)) {
@@ -22,19 +22,19 @@ public class TypeReferencesDiscovery {
             if(attributes.isPresent()) {
                 return attributesTypeReferences(attributes.orElseThrow());
             } else {
-                return emptyList();
+                return emptySet();
             }
         } else {
-            return emptyList();
+            return emptySet();
         }
     }
 
-    private List<TypeReference> methodReturnTypeReferences(ResolvedTypeDeclaration resolvedTypeDeclaration) {
+    private Set<TypeReference> methodReturnTypeReferences(ResolvedTypeDeclaration resolvedTypeDeclaration) {
         return resolvedTypeDeclaration.methods().stream()
                 .map(this::typeReference)
                 .filter(Optional::isPresent)
                 .map(Optional::orElseThrow)
-                .collect(toList());
+                .collect(toSet());
     }
 
     private Optional<TypeReference> typeReference(ResolvedMethod method) {
@@ -47,10 +47,14 @@ public class TypeReferencesDiscovery {
             } else {
                 var referenceBuilder = new TypeReference.Builder();
                 var typeClassName = typeClassName(returnType.orElseThrow());
-                referenceBuilder.typeClassName(typeClassName);
-                referenceBuilder.ignored(method.asAnnotatedElement().findAnnotation(Ignore.class.getCanonicalName()).isPresent());
-                referenceBuilder.type(componentType.orElseThrow());
-                return Optional.of(referenceBuilder.build());
+                if(typeClassName.equals(resolvedTypeDeclaration.name().name())) {
+                    return Optional.empty();
+                } else {
+                    referenceBuilder.typeClassName(typeClassName);
+                    referenceBuilder.ignored(method.asAnnotatedElement().findAnnotation(Ignore.class.getCanonicalName()).isPresent());
+                    referenceBuilder.type(componentType.orElseThrow());
+                    return Optional.of(referenceBuilder.build());
+                }
             }
         } else {
             return Optional.empty();
@@ -104,8 +108,8 @@ public class TypeReferencesDiscovery {
         }
     }
 
-    private List<TypeReference> attributesTypeReferences(ResolvedTypeDeclaration typeDeclaration) {
-        var references = new ArrayList<TypeReference>();
+    private Set<TypeReference> attributesTypeReferences(ResolvedTypeDeclaration typeDeclaration) {
+        var references = new HashSet<TypeReference>();
         attributesIdentifier(typeDeclaration).ifPresent(references::add);
         references.addAll(methodReturnTypeReferences(typeDeclaration));
         return references;

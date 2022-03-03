@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
+import poussecafe.source.ModuleResolver;
+import poussecafe.source.analysis.SafeClassName;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
@@ -41,6 +43,12 @@ public class SourceModel {
         return Collections.unmodifiableCollection(processes.values());
     }
 
+    public Stream<ProcessModel> moduleProcesses(TypeComponent module) {
+        var modulePackage = module.typeName().asName().qualifier();
+        return processes.values().stream()
+                .filter(service -> service.name().qualifier().startsWith(modulePackage));
+    }
+
     void addMessageListener(MessageListener source) {
         listeners.add(source);
     }
@@ -62,6 +70,12 @@ public class SourceModel {
 
     public List<MessageListener> messageListeners() {
         return unmodifiableList(listeners);
+    }
+
+    public Stream<MessageListener> moduleMessageListeners(TypeComponent module) {
+        var modulePackage = module.typeName().asName().qualifier();
+        return listeners.stream()
+                .filter(aggregate -> aggregate.container().containerClass().qualifier().startsWith(modulePackage));
     }
 
     void addCommand(Command command) {
@@ -164,6 +178,12 @@ public class SourceModel {
         return Collections.unmodifiableCollection(services);
     }
 
+    public Stream<TypeComponent> moduleServices(TypeComponent module) {
+        var modulePackage = module.typeName().asName().qualifier();
+        return services.stream()
+                .filter(service -> service.typeName().rootClassName().qualifier().startsWith(modulePackage));
+    }
+
     /**
      * Fixing package names implies the copy of all components of a given model but keeping
      * the package names as defined in this model. Only the components from given model are kept in the
@@ -220,5 +240,12 @@ public class SourceModel {
         } else {
             return aggregate;
         }
+    }
+
+    public ModuleResolver moduleResolver() {
+        return new ModuleResolver(modules.stream()
+                .map(TypeComponent::typeName)
+                .map(SafeClassName::asName)
+                .collect(toList()));
     }
 }

@@ -185,6 +185,7 @@ public class TreeAnalyzer {
                 .aggregateName(aggregateName)
                 .type(simpleFactoryName != null ? MessageListenerContainerType.STANDALONE_FACTORY : MessageListenerContainerType.INNER_FACTORY)
                 .containerIdentifier(containerIdentifier)
+                .containerClass(typeName.asName())
                 .build());
         builder.withMethodName(factoryListener.listenerName.getText());
         builder.withConsumedMessage(consumedMessage);
@@ -341,6 +342,7 @@ public class TreeAnalyzer {
                 .aggregateName(aggregateName)
                 .type(simpleName != null ? MessageListenerContainerType.STANDALONE_ROOT : MessageListenerContainerType.INNER_ROOT)
                 .containerIdentifier(containerIdentifier)
+                .containerClass(typeName.asName())
                 .build());
         builder.withMethodName(aggregateRootConsumption.listenerName.getText());
         builder.withConsumedMessage(consumedMessage);
@@ -351,6 +353,7 @@ public class TreeAnalyzer {
 
         var runnerName = aggregateRootConsumption.runnerName.getText();
         builder.withRunnerName(Optional.of(runnerName));
+        builder.withRunnerClass(Optional.of(packageName(aggregateName) + "." + runnerName));
 
         var producedEvents = producedEvents(aggregateRootConsumption.eventProductions());
         builder.withProducedEvents(producedEvents);
@@ -414,6 +417,7 @@ public class TreeAnalyzer {
                 .aggregateName(aggregateName)
                 .type(simpleRepositoryName != null ? MessageListenerContainerType.STANDALONE_REPOSITORY : MessageListenerContainerType.INNER_REPOSITORY)
                 .containerIdentifier(containerIdentifier)
+                .containerClass(typeName.asName())
                 .build());
         builder.withMethodName(repositoryConsumption.listenerName.getText());
         builder.withConsumedMessage(consumedMessage);

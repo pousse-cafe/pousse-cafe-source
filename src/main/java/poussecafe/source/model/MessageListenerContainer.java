@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Optional;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import poussecafe.source.analysis.ClassName;
 
 import static java.util.Objects.requireNonNull;
 import static poussecafe.util.Equality.referenceEquals;
@@ -37,6 +38,12 @@ public class MessageListenerContainer implements Serializable {
         return containerIdentifier.indexOf('.', 0) != -1;
     }
 
+    public ClassName containerClass() {
+        return containerClass;
+    }
+
+    private ClassName containerClass;
+
     public static class Builder {
 
         private MessageListenerContainer container = new MessageListenerContainer();
@@ -44,6 +51,7 @@ public class MessageListenerContainer implements Serializable {
         public MessageListenerContainer build() {
             requireNonNull(container.type);
             requireNonNull(container.containerIdentifier);
+            requireNonNull(container.containerClass);
 
             if((container.type.isFactory()
                         || container.type.isRepository()
@@ -67,6 +75,11 @@ public class MessageListenerContainer implements Serializable {
 
         public Builder containerIdentifier(String containerIdentifier) {
             container.containerIdentifier = containerIdentifier;
+            return this;
+        }
+
+        public Builder containerClass(ClassName containerClass) {
+            container.containerClass = containerClass;
             return this;
         }
     }
@@ -95,6 +108,7 @@ public class MessageListenerContainer implements Serializable {
     public boolean equals(Object obj) {
         return referenceEquals(this, obj).orElse(other -> new EqualsBuilder()
                 .append(aggregateName, other.aggregateName)
+                .append(containerClass, other.containerClass)
                 .append(containerIdentifier, other.containerIdentifier)
                 .append(type, other.type)
                 .build());
@@ -104,6 +118,7 @@ public class MessageListenerContainer implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(aggregateName)
+                .append(containerClass)
                 .append(containerIdentifier)
                 .append(type)
                 .build();

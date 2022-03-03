@@ -2,6 +2,7 @@ package poussecafe.source.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +51,7 @@ public class InnerAggregateRoot implements Serializable {
             return this;
         }
 
-        public Builder references(List<TypeReference> references) {
+        public Builder references(Collection<TypeReference> references) {
             references.forEach(aggregate.references::add);
             return this;
         }

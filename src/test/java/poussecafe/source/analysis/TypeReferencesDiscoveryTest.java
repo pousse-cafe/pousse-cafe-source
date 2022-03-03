@@ -2,7 +2,7 @@ package poussecafe.source.analysis;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 import poussecafe.source.DiscoveryTest;
 import poussecafe.source.model.ComponentType;
@@ -36,7 +36,7 @@ public class TypeReferencesDiscoveryTest {
         references = new TypeReferencesDiscovery(typeDeclaration).references();
     }
 
-    private List<TypeReference> references;
+    private Set<TypeReference> references;
 
     private void thenFound(int expectedSize) {
         assertThat(references.size(), is(expectedSize));
@@ -70,5 +70,16 @@ public class TypeReferencesDiscoveryTest {
 
     private void givenResolvedEntity() throws IOException {
         typeDeclaration = DiscoveryTest.resolveTypeDeclaration(Path.of("model", "aggregate1", "Aggregate1.java"), "Root");
+    }
+
+    @Test
+    public void referencesDoNotIncludeSource() throws IOException {
+        givenResolvedIdentifier1();
+        whenDiscoveringReferences();
+        thenFound(0);
+    }
+
+    private void givenResolvedIdentifier1() throws IOException {
+        typeDeclaration = DiscoveryTest.resolveTypeDeclaration(Path.of("model", "aggregate1", "Identifier1.java"));
     }
 }

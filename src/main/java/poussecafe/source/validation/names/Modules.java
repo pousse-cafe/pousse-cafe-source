@@ -1,50 +1,49 @@
 package poussecafe.source.validation.names;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import poussecafe.collection.Pair;
+import poussecafe.source.Conflict;
+import poussecafe.source.ModuleResolver;
 import poussecafe.source.analysis.ClassName;
 import poussecafe.source.validation.ValidationMessage;
 import poussecafe.source.validation.ValidationMessageType;
 import poussecafe.source.validation.model.Module;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
 public class Modules {
 
     public Modules(Collection<Module> modules) {
-        sortedModules = new Module[modules.size()];
-        modules.toArray(sortedModules);
-        Arrays.sort(sortedModules, moduleComparator);
+        modulesMap = modules.stream().collect(toMap(Module::className, module -> module));
+        resolver = new ModuleResolver(modules.stream().map(Module::className).collect(toList()));
     }
 
-    private Module[] sortedModules;
+    private Map<ClassName, Module> modulesMap = new HashMap<>();
 
-    private Comparator<Module> moduleComparator = (m1, m2) -> m1.basePackage().compareTo(m2.basePackage());
+    private ModuleResolver resolver;
 
     public List<ValidationMessage> checkModulesPartition() {
-        var messages = new ArrayList<ValidationMessage>();
-        for(int i = sortedModules.length - 1; i >= 1; --i) {
-            var sourceFileLine = sortedModules[i].sourceLine();
-            if(sourceFileLine.isPresent()
-                    && sortedModules[i].basePackage().startsWith(sortedModules[i - 1].basePackage())) {
-                messages.add(new ValidationMessage.Builder()
-                        .location(sourceFileLine.get())
+        return resolver.detectConflicts().stream()
+                .map(conflict -> new Pair<Conflict, Module>(conflict, modulesMap.get(conflict.innerModuleClass())))
+                .filter(pair -> pair.two() != null && pair.two().sourceLine().isPresent())
+                .map(pair -> new ValidationMessage.Builder()
+                        .location(pair.two().sourceLine().orElseThrow())
                         .type(ValidationMessageType.ERROR)
-                        .message("Base package is a subpackage of module " + sortedModules[i - 1].className())
-                        .build());
-            }
-        }
-        return messages;
+                        .message("Base package is a subpackage of module " + pair.one().outerModuleClass())
+                        .build())
+                .collect(toList());
     }
 
     public ClassName qualifyName(NamedComponent component) {
-        var componentQualifiedClassName = component.className().qualified();
-        for(int i = sortedModules.length - 1; i >= 0; --i) {
-            if(componentQualifiedClassName.startsWith(sortedModules[i].basePackage() + ".")) {
-                return new ClassName(sortedModules[i].name(), component.name());
-            }
+        var moduleClass = resolver.findModule(component.className());
+        if(moduleClass.isPresent()) {
+            return new ClassName(moduleClass.orElseThrow().simple(), component.name());
+        } else {
+            return new ClassName(component.name());
         }
-        return new ClassName(component.name());
     }
 }

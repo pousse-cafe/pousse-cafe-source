@@ -8,4 +8,8 @@ public class Identifier1 extends StringId implements ValueObject {
     public Identifier1(String value) {
         super(value);
     }
+
+    public Identifier1 build() {
+        return null;
+    }
 }

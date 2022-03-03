@@ -2,6 +2,7 @@ package poussecafe.source.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -71,7 +72,7 @@ public class TypeComponent implements Serializable, Documented {
             return this;
         }
 
-        public Builder references(List<TypeReference> references) {
+        public Builder references(Collection<TypeReference> references) {
             references.forEach(this::reference);
             return this;
         }

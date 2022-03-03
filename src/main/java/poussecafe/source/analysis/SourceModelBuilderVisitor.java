@@ -98,6 +98,7 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
                 .type(typeLevel == 0 ? MessageListenerContainerType.STANDALONE_ROOT : MessageListenerContainerType.INNER_ROOT)
                 .aggregateName(aggregateName)
                 .containerIdentifier(identifier)
+                .containerClass(resolvedTypeDeclaration.name().name())
                 .build();
     }
 
@@ -158,6 +159,7 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
                 .type(typeLevel == 0 ? MessageListenerContainerType.STANDALONE_FACTORY : MessageListenerContainerType.INNER_FACTORY)
                 .aggregateName(aggregateName)
                 .containerIdentifier(identifier)
+                .containerClass(resolvedTypeDeclaration.name().name())
                 .build();
     }
 
@@ -182,6 +184,7 @@ public class SourceModelBuilderVisitor implements ResolvedCompilationUnitVisitor
                 .type(typeLevel == 0 ? MessageListenerContainerType.STANDALONE_REPOSITORY : MessageListenerContainerType.INNER_REPOSITORY)
                 .aggregateName(aggregateName)
                 .containerIdentifier(identifier)
+                .containerClass(resolvedTypeDeclaration.name().name())
                 .build();
     }
 

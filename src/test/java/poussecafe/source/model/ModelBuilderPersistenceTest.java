@@ -58,6 +58,7 @@ public class ModelBuilderPersistenceTest {
                         .aggregateName("Aggregate")
                         .containerIdentifier("Aggregate.Root")
                         .type(MessageListenerContainerType.INNER_ROOT)
+                        .containerClass(new ClassName("package.Aggregate", "Root"))
                         .build())
                 .withConsumesFromExternal(singletonList("ExternalSource"))
                 .withMethodName("listener")

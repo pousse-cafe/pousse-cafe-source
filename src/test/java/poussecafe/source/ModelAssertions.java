@@ -45,6 +45,8 @@ public class ModelAssertions {
                 .message(Message.domainEvent("Event5"))
                 .required(true)
                 .build()));
+        assertThat(listener0.orElseThrow().runnerName(), equalTo(Optional.empty()));
+        assertThat(listener0.orElseThrow().runnerClass(), equalTo(Optional.empty()));
 
         Optional<MessageListener> listener1 = aggregateMessageListener("Aggregate1", "process1Listener1", "Event1");
         assertTrue(listener1.isPresent());
@@ -58,6 +60,7 @@ public class ModelAssertions {
                 .build()));
         assertThat(listener1.orElseThrow().consumesFromExternal(), equalTo(singletonList("External1")));
         assertThat(listener1.orElseThrow().runnerName(), equalTo(Optional.of("Process1Listener1Runner")));
+        assertThat(listener1.orElseThrow().runnerClass(), equalTo(Optional.of("poussecafe.source.testmodel.model.aggregate1.Process1Listener1Runner")));
 
         Optional<MessageListener> listener2 = aggregateMessageListener("Aggregate2", "process1Listener2", "Event2");
         assertTrue(listener2.isPresent());
@@ -71,6 +74,7 @@ public class ModelAssertions {
                 .consumedByExternal(asList("External2"))
                 .build()));
         assertThat(listener2.orElseThrow().runnerName(), equalTo(Optional.of("Process1Listener2Runner")));
+        assertThat(listener2.orElseThrow().runnerClass(), equalTo(Optional.of("poussecafe.source.testmodel.model.aggregate2.Process1Listener2Runner")));
 
         Optional<MessageListener> listener3 = aggregateMessageListener("Aggregate2", "process1Listener3", "Command2");
         assertTrue(listener3.isPresent());

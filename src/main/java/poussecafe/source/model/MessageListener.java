@@ -146,6 +146,7 @@ public class MessageListener implements Serializable, Documented {
                     .collect(toList());
 
             messageListener.runnerName = method.runner().map(ResolvedTypeName::simpleName).orElse(null);
+            messageListener.runnerClass = method.runner().map(ResolvedTypeName::qualifiedName).orElse(null);
 
             Optional<ResolvedType> returnType = method.returnType();
             if(returnType.isPresent()
