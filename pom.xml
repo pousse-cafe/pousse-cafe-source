@@ -9,6 +9,12 @@
         <version>0.29.0</version>
     </parent>
 
+    <scm>
+        <connection>scm:git:https://github.com/pousse-cafe/pousse-cafe-source.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/pousse-cafe/pousse-cafe-source.git</developerConnection>
+        <url>http://github.com/pousse-cafe/pousse-cafe-source/tree/master</url>
+    </scm>
+
     <artifactId>pousse-cafe-source</artifactId>
     <name>Pousse-Café - Source</name>
 
