@@ -1,4 +1,3 @@
-![Travis build status](https://travis-ci.org/pousse-cafe/pousse-cafe-source.svg?branch=master)
 ![Maven status](https://maven-badges.herokuapp.com/maven-central/org.pousse-cafe-framework/pousse-cafe-source/badge.svg)
 
 # Pousse-Cafe-Source
