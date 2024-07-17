@@ -1,8 +1,9 @@
 package poussecafe.source.generation.tools;
 
-import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ public class CompilationUnitEditorTest {
             sourceFile = File.createTempFile(getClass().getSimpleName(), ".java");
             sourceFile.deleteOnExit();
             referenceFile = new File("src/test/java/poussecafe/source/generation/existingcode/myaggregate/adapters/MyAggregateAttributes.java");
-            Files.copy(referenceFile, sourceFile);
+            Files.copy(referenceFile.toPath(), sourceFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,7 +46,7 @@ public class CompilationUnitEditorTest {
 
     private void thenContentUnchanged() {
         try {
-            assertTrue(Arrays.equals(Files.toByteArray(referenceFile), Files.toByteArray(sourceFile)));
+            assertTrue(Arrays.equals(Files.readAllBytes(referenceFile.toPath()), Files.readAllBytes(sourceFile.toPath())));
         } catch (IOException e) {
             assertTrue(false);
         }
