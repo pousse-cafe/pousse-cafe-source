@@ -21,7 +21,7 @@ public abstract class Source implements Serializable {
 
     public CompilationUnit compilationUnit() {
         if(compilationUnit == null) {
-            ASTParser parser = ASTParser.newParser(AST.JLS14);
+            ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
             configure(parser);
             compilationUnit = (CompilationUnit) parser.createAST(null);
         }

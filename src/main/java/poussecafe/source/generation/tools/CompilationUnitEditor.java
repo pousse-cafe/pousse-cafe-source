@@ -257,7 +257,7 @@ public class CompilationUnitEditor {
     }
 
     private void resetRewrite() {
-        ASTParser parser = ASTParser.newParser(AST.JLS14);
+        ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 
         Map<String, String> options = JavaCore.getOptions();
         JavaCore.setComplianceOptions(JavaCore.VERSION_11, options);

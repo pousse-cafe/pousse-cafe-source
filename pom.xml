@@ -57,14 +57,14 @@
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4</artifactId>
-            <version>4.8-1</version>
+            <version>4.13.1</version>
         </dependency>
 
         <!-- JDT -->
         <dependency>
             <groupId>org.eclipse.jdt</groupId>
             <artifactId>org.eclipse.jdt.core</artifactId>
-            <version>3.22.0</version>
+            <version>3.38.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -72,12 +72,17 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>ecj</artifactId>
+            <version>3.38.0</version>
+        </dependency>
 
         <!-- Resources dependencies -->
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.resources</artifactId>
-            <version>3.13.700</version>
+            <version>3.20.200</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -88,7 +93,7 @@
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.expressions</artifactId>
-            <version>3.6.800</version>
+            <version>3.9.400</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -101,7 +106,7 @@
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.runtime</artifactId>
-            <version>3.18.0</version>
+            <version>3.31.100</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -112,17 +117,17 @@
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.osgi</artifactId>
-            <version>3.15.300</version>
+            <version>3.20.0</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.equinox.common</artifactId>
-            <version>3.12.0</version>
+            <version>3.19.100</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.jobs</artifactId>
-            <version>3.10.800</version>
+            <version>3.15.300</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -133,7 +138,7 @@
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.equinox.registry</artifactId>
-            <version>3.8.800</version>
+            <version>3.12.100</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -144,7 +149,7 @@
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.equinox.preferences</artifactId>
-            <version>3.8.0</version>
+            <version>3.11.100</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -153,9 +158,14 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.prefs</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.contenttype</artifactId>
-            <version>3.7.700</version>
+            <version>3.9.400</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -166,7 +176,7 @@
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.equinox.app</artifactId>
-            <version>1.4.500</version>
+            <version>1.7.100</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -179,7 +189,7 @@
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.filesystem</artifactId>
-            <version>1.7.700</version>
+            <version>1.10.400</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -192,7 +202,7 @@
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.text</artifactId>
-            <version>3.10.200</version>
+            <version>3.14.100</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -203,7 +213,7 @@
         <dependency>
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.core.commands</artifactId>
-            <version>3.9.700</version>
+            <version>3.12.100</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -216,9 +226,18 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <argLine>-javaagent:${net.bytebuddy:byte-buddy-agent:jar}</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
-                <version>4.8-1</version>
+                <version>4.13.1</version>
                 <executions>
                     <execution>
                         <id>build-parser</id>
