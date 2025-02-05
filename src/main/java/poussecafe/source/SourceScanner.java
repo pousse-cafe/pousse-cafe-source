@@ -1,6 +1,7 @@
 package poussecafe.source;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,9 +17,6 @@ public class SourceScanner implements SourceConsumer {
 
     @Override
     public void includeFile(Path sourceFilePath) throws IOException {
-        if(!sourceFilePath.toFile().isFile()) {
-            throw new IllegalArgumentException(sourceFilePath + " does not point to a file");
-        }
         includeSource(new PathSource(sourceFilePath));
     }
 
@@ -56,15 +54,20 @@ public class SourceScanner implements SourceConsumer {
 
     @Override
     public void includeTree(Path sourceDirectory) throws IOException {
-        Files.walkFileTree(sourceDirectory, new JavaSourceFileVisitor());
+        if(sourceDirectory.toFile().isDirectory()) {
+            Files.walkFileTree(sourceDirectory, new JavaSourceFileVisitor());
+        } else {
+            try (var fs = FileSystems.newFileSystem(sourceDirectory)) {
+                Files.walkFileTree(fs.getPath("/"), new JavaSourceFileVisitor());
+            }
+        }
     }
 
     private class JavaSourceFileVisitor extends SimpleFileVisitor<Path> {
 
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            if(file.toFile().isFile()
-                    && file.toString().endsWith(".java")) {
+            if(file.toString().endsWith(".java")) {
                 includeFile(file);
             }
             return FileVisitResult.CONTINUE;

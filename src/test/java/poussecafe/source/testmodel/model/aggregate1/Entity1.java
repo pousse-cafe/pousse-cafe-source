@@ -1,8 +1,8 @@
 package poussecafe.source.testmodel.model.aggregate1;
 
+import poussecafe.annotations.ShortDescription;
 import poussecafe.domain.Entity;
 import poussecafe.domain.EntityAttributes;
-import poussecafe.source.ShortDescription;
 
 /**
  * Entity1 documentation.

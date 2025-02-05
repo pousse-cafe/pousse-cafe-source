@@ -1,7 +1,7 @@
 package poussecafe.source.testmodel.model.events;
 
+import poussecafe.annotations.ShortDescription;
 import poussecafe.domain.DomainEvent;
-import poussecafe.source.ShortDescription;
 
 /**
  * Event1 documentation.

@@ -19,16 +19,17 @@ public class PathSource extends Source implements Serializable {
     }
 
     private String readAllChars() {
-        byte[] bytes;
         try {
-            bytes = Files.readAllBytes(Path.of(id()));
+            return new String(Files.readAllBytes(path));
         } catch (IOException e) {
             throw new IllegalArgumentException("Unable to read path content", e);
         }
-        return new String(bytes);
     }
 
     public PathSource(Path path) {
         super(path.toString());
+        this.path = path;
     }
+
+    private transient Path path;
 }

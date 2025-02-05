@@ -3,7 +3,8 @@ package poussecafe.source.analysis;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import poussecafe.source.Ignore;
+
+import poussecafe.annotations.Ignore;
 import poussecafe.source.model.ComponentType;
 import poussecafe.source.model.TypeReference;
 

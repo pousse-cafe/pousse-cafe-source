@@ -1,7 +1,7 @@
 package poussecafe.source.testmodel.model.aggregate1;
 
+import poussecafe.annotations.ShortDescription;
 import poussecafe.domain.ValueObject;
-import poussecafe.source.ShortDescription;
 
 /**
  * ValueObject1 documentation.

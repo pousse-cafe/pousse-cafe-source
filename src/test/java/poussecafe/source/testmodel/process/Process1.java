@@ -1,7 +1,7 @@
 package poussecafe.source.testmodel.process;
 
+import poussecafe.annotations.ShortDescription;
 import poussecafe.domain.Process;
-import poussecafe.source.ShortDescription;
 
 /**
  * Process1 documentation.

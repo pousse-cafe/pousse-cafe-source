@@ -1,8 +1,8 @@
 package poussecafe.source.testmodel.commands;
 
+import poussecafe.annotations.ShortDescription;
 import poussecafe.discovery.MessageImplementation;
 import poussecafe.runtime.Command;
-import poussecafe.source.ShortDescription;
 
 /**
  * Command1 documentation.

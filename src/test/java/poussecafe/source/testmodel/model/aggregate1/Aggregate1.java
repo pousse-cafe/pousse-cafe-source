@@ -2,6 +2,8 @@ package poussecafe.source.testmodel.model.aggregate1;
 
 import java.util.List;
 import java.util.Optional;
+
+import poussecafe.annotations.ShortDescription;
 import poussecafe.attribute.Attribute;
 import poussecafe.attribute.entity.EntityAttribute;
 import poussecafe.discovery.Aggregate;
@@ -11,7 +13,6 @@ import poussecafe.domain.AggregateFactory;
 import poussecafe.domain.AggregateRepository;
 import poussecafe.domain.AggregateRoot;
 import poussecafe.domain.EntityAttributes;
-import poussecafe.source.ShortDescription;
 import poussecafe.source.testmodel.commands.Command1;
 import poussecafe.source.testmodel.commands.Command3;
 import poussecafe.source.testmodel.commands.Command4;

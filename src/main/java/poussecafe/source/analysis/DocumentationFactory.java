@@ -2,8 +2,10 @@ package poussecafe.source.analysis;
 
 import java.util.Optional;
 import org.eclipse.jdt.core.dom.Javadoc;
+
+import poussecafe.annotations.ShortDescription;
+import poussecafe.annotations.Trivial;
 import poussecafe.source.JavaDocStringBuilder;
-import poussecafe.source.ShortDescription;
 import poussecafe.source.model.Documentation;
 
 public class DocumentationFactory {
@@ -22,6 +24,7 @@ public class DocumentationFactory {
         if(shortDescription.isPresent()) {
             builder.shortDescription(shortDescription.orElseThrow());
         }
+        builder.trivial(annotatedElement.findAnnotation(Trivial.class.getCanonicalName()).isPresent());
         return builder.build();
     }
 

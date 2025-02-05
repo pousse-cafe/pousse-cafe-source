@@ -131,4 +131,22 @@ public class DocumentationDiscoveryTest extends DiscoveryTest {
                 .shortDescription("Event1 short")
                 .build()));
     }
+
+    @Test
+    public void identifierHasExpectedDocumentation() throws IOException {
+        givenModelBuilder();
+        whenIncludingTestModelTree();
+        thenIdentifierHasExpectedDocumentation();
+    }
+
+    private void thenIdentifierHasExpectedDocumentation() {
+        var model = model();
+        var valueObject = model.valueObjects().stream()
+                .filter(item -> item.typeName().simpleName().equals("Identifier1"))
+                .findFirst().orElseThrow();
+        assertThat(valueObject.documentation(), equalTo(new Documentation.Builder()
+                .trivial(true)
+                .build()));
+        assertThat(valueObject.typeName().qualifiedName(), equalTo(basePackage() + ".model.aggregate1.Identifier1"));
+    }
 }
