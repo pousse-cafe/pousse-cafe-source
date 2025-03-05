@@ -154,9 +154,8 @@ public class TreeAnalyzer {
     private void analyzeFactoryConsumption(List<String> consumesFromExternal,
             Message consumedMessage,
             FactoryConsumptionContext factoryConsumption) {
-        var factoryListener = factoryConsumption.factoryListener();
-        var simpleFactoryName = factoryListener.simpleFactoryName;
-        var qualifiedFactoryName = factoryListener.qualifiedFactoryName;
+        var simpleFactoryName = factoryConsumption.simpleFactoryName;
+        var qualifiedFactoryName = factoryConsumption.qualifiedFactoryName;
 
         String aggregateName;
         String containerIdentifier;
@@ -187,23 +186,22 @@ public class TreeAnalyzer {
                 .containerIdentifier(containerIdentifier)
                 .containerClass(typeName.asName())
                 .build());
-        builder.withMethodName(factoryListener.listenerName.getText());
+        builder.withMethodName(factoryConsumption.listenerName.getText());
         builder.withConsumedMessage(consumedMessage);
         builder.withSource(source(typeName));
         if(processName != null) {
             builder.withProcessName(processName);
         }
 
-        if(factoryListener.optional != null) {
+        if(factoryConsumption.optional != null) {
             builder.withReturnTypeCardinality(Optional.of(Cardinality.OPTIONAL));
-        } else if(factoryListener.serveral != null) {
+        } else if(factoryConsumption.several != null) {
             builder.withReturnTypeCardinality(Optional.of(Cardinality.SEVERAL));
         } else {
             builder.withReturnTypeCardinality(Optional.of(Cardinality.SINGLE));
         }
 
-        if(factoryConsumption.aggregateRoot() != null
-                && factoryConsumption.eventProductions() != null) {
+        if(factoryConsumption.eventProductions() != null) {
             var producedEvents = producedEvents(factoryConsumption.eventProductions());
             builder.withProducedEvents(producedEvents);
         }
@@ -428,14 +426,13 @@ public class TreeAnalyzer {
 
         if(repositoryConsumption.optional != null) {
             builder.withReturnTypeCardinality(Optional.of(Cardinality.OPTIONAL));
-        } else if(repositoryConsumption.serveral != null) {
+        } else if(repositoryConsumption.several != null) {
             builder.withReturnTypeCardinality(Optional.of(Cardinality.SEVERAL));
         } else {
             builder.withReturnTypeCardinality(Optional.of(Cardinality.SINGLE));
         }
 
-        if(repositoryConsumption.aggregateRoot() != null
-                && repositoryConsumption.eventProductions() != null) {
+        if(repositoryConsumption.eventProductions() != null) {
             var producedEvents = producedEvents(repositoryConsumption.eventProductions());
             builder.withProducedEvents(producedEvents);
         }
